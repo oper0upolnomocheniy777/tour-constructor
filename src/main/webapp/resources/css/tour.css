@@ -1,0 +1,63 @@
+.tour {
+	position: relative;
+	margin: 10px 5px;
+	padding: 10px;
+
+	background: white;
+    box-shadow: 0px 0px 4px 1px gray;
+    border: solid 1px white;
+
+     transition: box-shadow 0.25s ease-in-out;
+}
+
+.tour:hover {
+    border: solid 1px #003580;
+    box-shadow: 0px 0px 8px 3px gray;
+}
+
+.tour-wrapper > a{
+    text-decoration: none
+}
+
+.tour > div {
+    margin: 0px;
+}
+
+.tour > .heading {
+	min-height: 40px;
+
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.tour > .body {
+	min-height: 50px;
+	color: rgb(67, 66, 68);
+	font-size: 16px;
+}
+
+.tour > .footer {
+	min-height: 10px;
+}
+
+.btn-tour-info {
+    position: relative;
+    top: 15px;
+    right: 15px;
+    padding: 5px 15px;
+
+    background: white;
+    color: black;
+}
+
+.hot {
+    position: absolute;
+    height: 30px;
+    right: 5px;
+	top: 3px;
+}
+
+.dest-label {
+    margin-left: 10px;
+    line-height: 20pt;
+}

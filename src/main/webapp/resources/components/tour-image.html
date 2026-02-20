@@ -1,0 +1,20 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<div class="image-container pull-left">
+    <div class="image dropdown">
+        <a href="${tourImage.imageUrl}" class="image"
+           data-lightbox="image-1">
+            <div class="image-frame">
+                <img src="${tourImage.thumbnailUrl}"/>
+            </div>
+        </a>
+
+        <u:if-user role="TOUR_AGENT">
+            <div class="dropdown-content">
+                <a href="#" data-action="removeImage"
+                   data-id="${tourImage.id}"><i class="glyphicon glyphicon-trash"></i></a>
+                <!--<a href="#"><i class="glyphicon glyphicon-trash"></i></a>-->
+            </div>
+        </u:if-user>
+    </div>
+</div>

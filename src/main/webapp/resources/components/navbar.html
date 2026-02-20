@@ -1,0 +1,54 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<div class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/">
+                <img src="/resources/images/sunbed.png" class="pull-left" style="margin-top: -7px; margin-right: 7px">
+                Tour Agency
+            </a>
+        </div>
+
+        <div class="collapse navbar-collapse navbar-menubuilder">
+            <c:if test="${loggedIn}">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#" onclick="logout()">
+                            <fmt:message key="logout" bundle="${rb}"/>
+                        </a>
+                    </li>
+                </ul>
+            </c:if>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#" id="lang" data-alt="${locale eq 'ua_UA' ? 'en' : 'ua'}"
+                           style="border-right: solid 1px blue"><span>${locale eq 'ua_UA' ? 'ua' : 'en'}</span>
+                                <img src="/resources/images/lang.png"/>
+                        </a>
+                    </li>
+                    <c:if test="${not loggedIn}">
+                        <li><a href="/login.html">
+                                <fmt:message key="auth" bundle="${rb}"/>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/register.html">
+                                <fmt:message key="register" bundle="${rb}"/>
+                            </a>
+                        </li>
+                    </c:if>
+                </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+</script>
+
+<script src="/resources/js/components/navbar.html.js"></script>
+
+<img src="/resources/images/footer.png" id="footer-image"/>

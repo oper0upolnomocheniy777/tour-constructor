@@ -1,0 +1,75 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<html>
+<head>
+    <title>Tour Agency</title>
+    <c:import url="/resources/components/head.html"/>
+    <script src="/resources/js/util.js"></script>
+</head>
+<body>
+
+<c:import url="/resources/components/navbar.html"/>
+
+    <div class="container-fluid">
+        <div class="sidebar-wrapper">
+            <div class="sidebar floating-plane">
+                <c:import url="/resources/components/sidebar.html"/>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="col-md-11">
+                <h1>
+                    <fmt:message key="all_users.title" bundle="${rb}"/>
+                </h1>
+                <hr/>
+
+                <div class="btn btn-contrast pull-right" id="save">
+                    <fmt:message key="save" bundle="${rb}"/>
+                </div>
+
+                <c:forEach var="summary" items="${summaries}">
+                    <c:set var="user" value="${summary.user}"/>
+
+                    <div class="col-md-12">
+                        <div class="entry-box bordered clearfix">
+                            <c:out value="${user.firstName} ${user.lastName}"/>
+                        <span class="badge">
+                           ${summary.purchaseCount} |
+                           $ ${summary.totalPrice}
+                        </span>
+
+                            <c:if test="${!summary.tourAgent}">
+                                <form action="/agent/setadmin" method="POST"
+                                      class="inline">
+                                    <input type="hidden" name="id" value="${user.id}"/>
+                                    <div class="btn btn-sm" data-tour-agent-action="true">
+                                        <fmt:message key="admin_tours.make_admin" bundle="${rb}"/>
+                                    </div>
+                                </form>
+                            </c:if>
+
+                            <form method="post" action="/user/discount" class="pull-right" data-dirty="false">
+                                <input type="hidden" name="id" value="${user.id}"/>
+                                <fmt:message key="discount" bundle="${rb}"/>
+                                (%): <input type="number" name="discount" min="0" value="${user.discount}" />
+                            </form>
+
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
+
+    </div>
+    
+    <script src="/resources/js/users.js"></script>
+    
+    <div id="message" class="well well-sm" style="display: none">msg</div>
+
+</body>
+</html>

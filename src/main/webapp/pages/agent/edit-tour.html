@@ -1,0 +1,56 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<html>
+<head>
+    <title>Tour Agency</title>
+    <c:import url="/resources/components/head.html"/>
+    <link rel="stylesheet" href="/resources/css/tour.css"/>
+</head>
+<body>
+
+<c:import url="/resources/components/navbar.html"/>
+
+<div class="container-fluid">
+    <div class="sidebar-wrapper">
+        <div class="col-md-3 sidebar floating-plane">
+            <c:import url="/resources/components/sidebar.html"/>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="col-md-8 col-md-offset-1 floating-plane">
+            <c:if test="${not empty param.failed}">
+                <p class="bg-danger">
+                    <fmt:message key="form.error" bundle="${rb}"/>
+                </p>
+            </c:if>
+
+            <form class="col-md-12" method="post" action="/tours">
+                <input type="hidden" name="__method" value="PUT"/>
+                <input type="hidden" name="id" value="${tour.id}"/>
+
+                <c:set var="hot" value="${tour.hot}"/>
+                <%@include file="/resources/components/tour-fieldset.html" %>
+
+                <fmt:message key="save" var="save" bundle="${rb}"/>
+                <input type="submit" class="btn btn-success pull-right" value="${save}"/>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="/resources/bower_components/markdown/lib/markdown.js"></script>
+<script src="/resources/bower_components/bootstrap-markdown/js/bootstrap-markdown.js"></script>
+<script>
+    $("#description").markdown({
+        fullscreen:{ enable: false },
+        resize: "vertical",
+    });
+</script>
+
+</body>
+</html>

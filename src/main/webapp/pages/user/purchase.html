@@ -1,0 +1,72 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="u" uri="util" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<html>
+<head>
+    <title>Tour Agency</title>
+    <c:import url="/resources/components/head.html"/>
+    <link rel="stylesheet" href="/resources/css/review.css"/>
+    <link rel="stylesheet" href="/resources/css/purchase.css"/>
+    <link rel="stylesheet" href="/resources/css/galery.css"/>
+    <link rel="stylesheet" href="/resources/css/dropdown.css"/>
+    <link rel="stylesheet" href="/resources/bower_components/lightbox2/dist/css/lightbox.css"/>
+    <link rel="stylesheet" href="/resources/bower_components/rateYo/src/jquery.rateyo.css"/>
+    <link rel="stylesheet" href="/resources/bower_components/jquery.filer/css/jquery.filer.css"/>
+    <script src="/resources/js/util.js"></script>
+    <script src="/resources/bower_components/lightbox2/dist/js/lightbox.js"></script>
+    <script src="/resources/bower_components/bootstrap/js/modal.js"/></script>
+    <script src="/resources/bower_components/jquery.filer/js/jquery.filer.js"></script>
+</head>
+<body>
+
+<c:import url="/resources/components/navbar.html"/>
+
+<input type="hidden" id="rating-val" value="${tour.avgRating}"/>
+
+<div class="container-fluid">
+    <div clas="sidebar-wrapper">
+        <div class="sidebar floating-plane">
+            <c:import url="/resources/components/sidebar.html"/>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="col-md-11">
+            <p>
+                <a href="/tour.html?id=${tourId}" class="btn">
+                    <i class="glyphicon glyphicon-arrow-left"></i>
+                    <fmt:message key="purchase.back_tour" bundle="${rb}"/>
+                </a>
+                <a href="/user/purchases.html" class="btn">
+                    <i class="glyphicon glyphicon-arrow-up"></i>
+                    <fmt:message key="purchase.back_purchases" bundle="${rb}"/>
+                </a>
+            </p>
+
+            <h3>
+                <c:out value="${tour.title}"/>
+            </h3>
+
+            <div class="price">
+                <fmt:message key="purchase.starting_price" bundle="${rb}"/>: $${tour.price.doubleValue()}
+            </div>
+
+            <h4>
+                <fmt:message key="purchase.list" bundle="${rb}"/>:
+            </h4>
+            <c:set var="purchases" value="${purchases}"/>
+            <%@include file="/resources/components/purchases-table.html" %>
+            <hr/>
+
+        </div>
+
+
+    </div>
+</div>
+
+</body>
+</html>

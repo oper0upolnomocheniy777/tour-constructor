@@ -1,0 +1,92 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<html>
+<head>
+    <title>Tour Agency</title>
+    <c:import url="/resources/components/head.html"/>
+    <link rel="stylesheet" href="/resources/css/purchase.css"/>
+    <link rel="stylesheet" href="/resources/css/tour.css"/>
+    <script src="/resources/bower_components/marked/lib/marked.js"></script>
+</head>
+<body>
+
+<c:import url="/resources/components/navbar.html"/>
+
+    <div class="container-fluid">
+        <div class="sidebar floating-plane">
+            <div class="col-md-3 sidebar">
+                <c:import url="/resources/components/sidebar.html"/>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="col-md-11">
+                <h1>
+                    <fmt:message key="purchases.title" bundle="${rb}"/>
+                </h1>
+                <hr/>
+
+                <c:if test="${empty purchaseGroups}">
+                    <h3>
+                        <fmt:message key="tours.empty" bundle="${rb}"/>
+                    </h3>
+                </c:if>
+
+                <c:forEach var="group" items="${purchaseGroups}">
+                    <c:set var="tour" value="${group.key}" />
+
+                    <div class="col-md-12">
+                        <a href="/user/purchase.html?tourId=${tour.id}">
+                            <div class="tour clearfix">
+                                <div class="heading">
+                                    <c:out value="${tour.title}"/>
+                                </div>
+
+                                <div class="body" data-provide="markdown"><c:out value="${tour.description}"/></div>
+
+                                <div class="footer">
+                                    <div class="pull-left badge badge-success" style="line-height: 20px">
+                                        <c:out value="${tour.price.doubleValue()}"/>
+                                    </div>
+                                    <div class="pull-right badge badge-success" style="line-height: 20px">
+                                        <c:out value="${group.elems.size()}"/>
+                                        <fmt:message key="purchase.units" bundle="${rb}"/>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </a>
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+$(function () {
+
+  $('.stars').each(function() {
+    var $this = $(this);
+    $this.rateYo({
+        rating: $this.data('rating') || 0,
+        readOnly: true,
+        starWidth: '17px'
+    });
+  });
+
+  $('div[data-provide=markdown]').each(function() {
+    var $this = $(this);
+    $this.html(marked($this.html().replace(/#/g, '').replace(/[\n\r]+/g, ' ').trim()));
+  });
+
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,19 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<ul class="nav nav-pills nav-stacked float-1">
+    <li><a href="/">
+            <fmt:message key="home" bundle="${rb}"/>
+        </a>
+    </li>
+    <li><a href="/tours.html">
+        <fmt:message key="tours" bundle="${rb}"/>
+    </a>
+    </li>
+</ul>
+
+<c:import url="/resources/components/sidebar-agent.html"/>
+<c:import url="/resources/components/sidebar-user.html"/>

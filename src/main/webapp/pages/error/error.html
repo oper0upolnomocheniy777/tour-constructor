@@ -1,0 +1,39 @@
+<%@ page language="java" isErrorPage="true" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<html>
+<head>
+    <title>Error</title>
+    <c:import url="/resources/components/head.html"/>
+    <link rel="stylesheet" href="/resources/css/tour.css"/>
+</head>
+<body>
+
+<c:import url="/resources/components/navbar.html"/>
+
+<div class="container-fluid">
+
+    <div class="col-md-offset-3 col-md-8 content">
+        <div class="hero-unit">
+            <h1>Error ${pageContext.errorData.statusCode}</h1>
+            <hr/>
+            <p><b>URL:</b> ${pageContext.request.scheme}://${header.host}${pageContext.errorData.requestURI}</p>
+
+            <p> <fmt:message key="error.explain" bundle="${rb}"/>
+                <a class="btn" onclick="history.back()">Back</a></p>
+
+            <p><b>
+                <fmt:message key="error.home_help" bundle="${rb}"/>
+            </b></p>
+            <a href="/" class="btn"><i class="glyphicon glyphicon-home"></i>
+                <fmt:message key="go_home" bundle="${rb}"/>
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

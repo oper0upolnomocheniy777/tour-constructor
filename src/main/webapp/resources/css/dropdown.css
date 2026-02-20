@@ -1,0 +1,33 @@
+.dropdown {
+    position: relative;
+}
+
+.dropdown .dropdown-content {
+    overflow: hidden;
+    position: absolute;
+    bottom: -45px;
+    z-index: 1;
+    opacity: 0;
+    transition:opacity 200ms ease-in;
+    transition-delay: 200ms;
+    background: none;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+    overflow: visible;
+    width: auto;
+    opacity: 1;
+}
+
+.dropdown-content > a {
+    background-color: #f9f9f9;
+    position: static;
+    box-sizing: content-box;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    padding: 6px 6px;
+    font-size: 14pt;
+    border: 1px solid #FFBC3B;
+}

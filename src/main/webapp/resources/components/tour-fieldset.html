@@ -1,0 +1,124 @@
+<!-- Input params: ${rb}, ${tour}, ${hot} -->
+
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+
+<fieldset>
+    <legend>
+        <fmt:message key="new_tour.title" bundle="${rb}"/>
+    </legend>
+
+    <div class="row">
+        <label class="col-md-3 control-label" for="">
+            <fmt:message key="tour.title" bundle="${rb}"/>
+        </label>
+
+        <div class="col-md-9">
+            <input  name="title" placeholder="Тур" class="form-control input-md" required=""
+                    type="text" value="${tour.title}" size="5" maxlength="25">
+        </div>
+    </div>
+
+    <div class="row top-buffer-sm">
+        <label class="col-md-3 control-label" for="destination">
+            <fmt:message key="tour.destination" bundle="${rb}"/>
+        </label>
+
+        <div class="col-md-9">
+                <input id="destination" name="destination" class="form-control" placeholder="Ukraine, Kyiv"
+                       required="" type="text" value="${tour.destination}" />
+        </div>
+    </div>
+
+
+    <div class="row top-buffer-sm">
+        <label class="col-md-3 control-label" for="price">
+            <fmt:message key="tour.price" bundle="${rb}"/>
+        </label>
+
+        <div class="col-md-9">
+            <div class="input-group">
+                <input id="price" name="price" class="form-control" placeholder="100"
+                       required="" type="text" value="${tour.price.doubleValue()}">
+                <span class="input-group-addon">$</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row top-buffer-sm">
+        <label class="col-md-3 control-label" for="discount">
+            <fmt:message key="discount" bundle="${rb}"/>
+        </label>
+
+        <div class="col-md-9">
+            <div class="input-group">
+                <input id="discount" name="discount" class="form-control" placeholder="100"
+                       required="" type="number" min="0" max="100" value="${tour.discount}">
+                <span class="input-group-addon">%</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row top-buffer-sm">
+        <label class="col-md-3 control-label" for="type">
+            <fmt:message key="tour.type" bundle="${rb}"/>
+        </label>
+
+        <div class="col-md-9">
+            <select id="type" name="type" class="form-control col" value="${tour.type}">
+                <option value="0">
+                    <fmt:message key="tour.recreation" bundle="${rb}"/>
+                </option>
+                <option value="1">
+                    <fmt:message key="tour.excursion" bundle="${rb}"/>
+                </option>
+                <option value="2">
+                    <fmt:message key="tour.shopping" bundle="${rb}"/>
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div class="row top-buffer-sm">
+        <label class="col-md-3 control-label" for="opts">
+            <fmt:message key="tour.set_hot" bundle="${rb}"/>
+        </label>
+
+        <div class="col-md-9">
+            <div class="checkbox">
+                <label for="opts-0">
+                    <input type="checkbox" name="hot"
+                           id="opts-0" value="1" ${hot eq 'true' ? 'checked="checked"' : ''}/>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row top-buffer-sm">
+        <label class="col-md-3 control-label" for="opts">
+            <fmt:message key="tour.enabled" bundle="${rb}"/>
+        </label>
+
+        <div class="col-md-9">
+            <div class="checkbox">
+                <label for="opts-1">
+                    <input name="enabled" id="opts-1" value="1" checked=checked type="checkbox">
+                    <fmt:message key="yes" bundle="${rb}"/>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="row top-buffer">
+        <label class="col-md-1 control-label" for="description">
+            <fmt:message key="tour.info" bundle="${rb}"/>
+        </label>
+
+        <div class="col-md-12">
+            <div class="well" style="overflow: scroll">
+                            <textarea class="form-control" id="description"
+                                      name="description" data-provide="markdown">${tour.description}</textarea>
+            </div>
+        </div>
+    </div>
+
+</fieldset>

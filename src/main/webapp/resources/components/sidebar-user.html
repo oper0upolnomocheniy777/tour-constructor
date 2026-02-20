@@ -1,0 +1,14 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="u" uri="util" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<u:if-user>
+    <ul class="nav nav-pills nav-stacked">
+        <li><a href="/user/purchases.html">
+                <fmt:message key="purchases" bundle="${rb}"/>
+            </a>
+        </li>
+    </ul>
+</u:if-user>

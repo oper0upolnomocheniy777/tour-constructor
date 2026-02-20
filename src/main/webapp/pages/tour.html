@@ -1,0 +1,169 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="u" uri="util" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<html>
+<head>
+    <title>Tour Agency</title>
+    <c:import url="/resources/components/head.html"/>
+    <link rel="stylesheet" href="/resources/css/review.css"/>
+    <link rel="stylesheet" href="/resources/css/purchase.css"/>
+    <link rel="stylesheet" href="/resources/css/galery.css"/>
+    <link rel="stylesheet" href="/resources/css/dropdown.css"/>
+    <link rel="stylesheet" href="/resources/bower_components/lightbox2/dist/css/lightbox.css"/>
+    <link rel="stylesheet" href="/resources/bower_components/rateYo/src/jquery.rateyo.css"/>
+    <link rel="stylesheet" href="/resources/bower_components/jquery.filer/css/jquery.filer.css"/>
+    <script src="/resources/bower_components/marked/lib/marked.js"></script>
+    <script src="/resources/js/util.js"></script>
+    <script src="/resources/bower_components/lightbox2/dist/js/lightbox.js"></script>
+    <script src="/resources/bower_components/bootstrap/js/modal.js"/></script>
+    <script src="/resources/bower_components/jquery.filer/js/jquery.filer.js"></script>
+</head>
+<body>
+
+<c:import url="/resources/components/navbar.html"/>
+
+<input type="hidden" id="rating-val" value="${tour.avgRating}"/>
+
+<div class="container-fluid">
+    <div class="sidebar-wrapper">
+        <div class="sidebar floating-plane">
+            <c:import url="/resources/components/sidebar.html"/>
+        </div>
+    </div>
+
+    <div class="content">
+
+        <div class="col-md-11">
+
+            <u:if-user role="TOUR_AGENT">
+                <a href="/agent/edit-tour.html?id=${tour.id}" class="btn btn-sm">
+                    <i class="glyphicon glyphicon-edit"></i>
+                    <fmt:message key="tour.edit" bundle="${rb}"/>
+                </a>
+            </u:if-user>
+
+                <div class="col-offset-md-1 col-md-12">
+                    <div class="pull-left">
+                        <h3>
+                            <c:out value="${tour.title}"/>
+                        </h3>
+                        <div class="price">
+                            $${tour.price.doubleValue()}
+                        </div>
+                    </div>
+                    <div class="pull-right">
+                        <div class="vcentered-container">
+                            <div id="rating-static" class="vcentered" style="display: inline-block"></div>
+                            (<a class="vcentered" href="">${tour.votesCount}</a>)
+                        </div>
+                    </div>
+                </div>
+
+            <br/>
+
+                <div class="col-offset-md-1 col-md-12">
+                    <c:if test="${discount > 0}">
+                        <div class="pull-right discount">
+                            -${discount}%
+                        </div>
+                    </c:if>
+                    <div class="tour-desc col-md-10" data-provide="markdown"><c:out value="${tour.description}"/></div>
+                </div>
+
+            <br/>
+
+            <fmt:message key="buy.buy" var="buy" bundle="${rb}"/>
+
+                <div class="col-offset-md-1 col-md-12">
+                    <a class="btn pull-right"
+                       href="/user/buy.html?tourId=${tour.id}">${buy}</a>
+                </div>
+
+                <div class="col-md-12 galery">
+                    <c:forEach var="tourImage" items="${tourImages}">
+                        <%@include file="/resources/components/tour-image.html" %>
+                    </c:forEach>
+
+                    <%@include file="/resources/components/fake-tour-image.html" %>
+
+                    <u:if-user role="TOUR_AGENT">
+                        <%@include file="/resources/components/tour-image-new-btn.html" %>
+                    </u:if-user>
+                </div>
+
+            <hr/>
+
+                <div class="col-offset-md-1 col-md-12">
+                    <h3>
+                        <fmt:message key="review.title" bundle="${rb}"/>
+                    </h3>
+
+                    <c:if test="${canVote || oldReview != null }">
+                        <center>
+                            <div id="new-review-btn">
+                                <c:if test="${oldReview != null}">
+                                    <i class="glyphicon glyphicon-record"></i>
+                                </c:if>
+                                <c:if test="${oldReview == null}">
+                                    <i class="glyphicon glyphicon-plus-sign"></i>
+                                </c:if>
+                            </div>
+                        </center>
+                    </c:if>
+
+                    <br/>
+
+                    <%@include file="/resources/components/review-input.html" %>
+
+                    <div class="reviews">
+                        <c:forEach var="review" items="${reviews}">
+                            <%@include file="/resources/components/review.html" %>
+                        </c:forEach>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+
+</div>
+
+<%@include file="/resources/components/upload-images-modal.html" %>
+
+<form action="/tour-images" method="post" class="hidden"
+      id="tour-images-create-form">
+    <input type="hidden" name="tourId" value="${tour.id}"/>
+    <input type="hidden" name="imageUrl" value=""/>
+    <input type="hidden" name="thumbnailUrl" value=""/>
+</form>
+
+<form action="/tour-images" method="post" class="hidden"
+      id="tour-image-remove-form">
+    <input type="hidden" name="__method" value="DELETE"/>
+    <input type="hidden" name="id" value=""/>
+</form>
+
+<div id="rating-messages">
+    <fmt:message key="review.one" var="one" bundle="${rb}"/>
+    <fmt:message key="review.two" var="two" bundle="${rb}"/>
+    <fmt:message key="review.three" var="three" bundle="${rb}"/>
+    <fmt:message key="review.four" var="four" bundle="${rb}"/>
+    <fmt:message key="review.five" var="five" bundle="${rb}"/>
+
+    <input type="hidden" name="one" value="${one}">
+    <input type="hidden" name="two" value="${two}">
+    <input type="hidden" name="three" value="${three}">
+    <input type="hidden" name="four" value="${four}">
+    <input type="hidden" name="five" value="${five}">
+</div>
+
+
+<script src="/resources/bower_components/rateYo/src/jquery.rateyo.js"></script>
+
+<script src="/resources/js/tour.html.js"></script>
+
+</body>
+</html>

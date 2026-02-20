@@ -1,0 +1,116 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<html>
+<head>
+    <title>Tour Agency</title>
+    <c:import url="/resources/components/head.html"/>
+
+    <link rel="stylesheet" href="/resources/bower_components/rateYo/src/jquery.rateyo.css"/>
+    <link rel="stylesheet" href="/resources/css/index.css"/>
+</head>
+<body>
+
+<c:import url="/resources/components/navbar.html"/>
+
+<div class="container-fluid">
+
+    <div class="sidebar-wrapper">
+        <div class="sidebar floating-plane">
+            <c:import url="/resources/components/sidebar.html"/>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="col-md-11">
+            <h1><fmt:message key="index.welcome" bundle="${rb}"/></h1>
+
+            <h3><fmt:message key="index.hot" bundle="${rb}"/></h3>
+
+            <div>
+                <div id="hotCarousel" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <c:forEach var="tour" items="${tours}" varStatus="it">
+                            <li data-target="#hotCarousel" data-slide-to="${it.index}"
+                                class="${it.index eq 0 ? 'active' : ''}">
+                            </li>
+                        </c:forEach>
+                    </ol>
+
+                    <div class="carousel-inner" role="listbox">
+                        <c:forEach var="tour" items="${tours}" varStatus="it">
+                            <div class="item ${it.index eq 0 ? 'active' : ''}">
+                                <div class="carousel-bg">
+                                </div>
+
+                                <div class="carousel-caption">
+                                    <a href="/tour.html?id=${tour.id}">
+
+                                        <h3>
+                                            <c:out value="${tour.title}"/>
+                                        </h3>
+                                        <p>
+                                            <c:out value="${tour.description}"/>
+                                        </p>
+                                        <p>
+                                            $
+                                            <fmt:formatNumber value="${tour.price}"
+                                                              type="NUMBER"/>
+
+                                        </p>
+                                        <center>
+                                            <div class="vcentered-container">
+                                                <div class="stars vcentered"
+                                                     data-rating="${tour.avgRating}" style="display: inline-block"></div>
+                                            </div>
+                                        </center>
+
+                                    </a>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+
+                    <!-- Left and right controls -->
+                    <a class="left carousel-btn" href="#hotCarousel" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-btn" href="#hotCarousel" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+<script src="/resources/bower_components/bootstrap/js/transition.js"></script>
+<script src="/resources/bower_components/bootstrap/js/carousel.js"> </script>
+<script src="/resources/bower_components/rateYo/src/jquery.rateyo.js"></script>
+
+<script>
+$(function () {
+
+$('.stars').each(function() {
+var $this = $(this);
+$this.rateYo({
+    rating: $this.data('rating') || 0,
+    readOnly: true,
+    starWidth: '17px'
+});
+});
+
+});
+</script>
+
+</body>
+</html>

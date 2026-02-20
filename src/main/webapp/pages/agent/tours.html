@@ -1,0 +1,83 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<html>
+<head>
+    <title>Tour Agency</title>
+    <c:import url="/resources/components/head.html"/>
+</head>
+<body>
+
+<c:import url="/resources/components/navbar.html"/>
+
+    <div class="container-fluid">
+        <div class="sidebar-wrapper">
+            <div class="col-md-3 sidebar floating-plane">
+                <c:import url="/resources/components/sidebar.html"/>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="col-md-11">
+                <h1>
+                    <fmt:message key="admin_tours.title" bundle="${rb}"/>
+                </h1>
+                <hr/>
+
+                <c:forEach var="tour" items="${tours}">
+                    <div class="entry-box bordered clearfix">
+                        <div class="inline title">
+                            <c:choose>
+                                <c:when test="${tour.enabled}">
+                                    <c:out value="${tour.title}"/>
+                                </c:when>
+                                <c:otherwise>
+                                    <strike>
+                                        <c:out value="${tour.title}"/>
+                                    </strike>
+                                </c:otherwise>
+                            </c:choose>
+                        </div>
+
+                    <span class="badge">$
+                        <c:out value="${tour.price.doubleValue()}"/>
+                    </span>
+
+                        <c:set var="editLink" value="/agent/edit-tour.html?id=${tour.id}"/>
+                        <a class="btn btn-sm btn-default pull-right" href="${editLink}">Змінити</a>
+
+                        <fmt:message key="tour.enable" var="enable" bundle="${rb}"/>
+                        <fmt:message key="tour.disable" var="disable" bundle="${rb}"/>
+                        <div class="btn btn-sm btn-default pull-right" data-enabled="${tour.enabled}" onclick="toggleEnabled(this, ${tour.id})">
+                            ${tour.enabled ? disable : enable}
+                        </div>
+
+                    </div>
+                </c:forEach>
+            </div>
+        </div>
+    </div>
+
+<script>
+        function toggleEnabled(el, id) {
+            $.post('/agent/tours.html', {command: 'toggle', id: id});
+            var $el = $(el);
+            var enabled = $el.data('enabled');
+            if(enabled === true || enabled === 'true') {
+                $el.parents('.entry-box').find('.title').wrapInner('<strike></strike');
+                $el.data('enabled', false);
+                $el.html('${enable}');
+            } else {
+                $el.parents('.entry-box').find('.title strike').contents().unwrap();
+                $el.data('enabled', true);
+                $el.html('${disable}');
+            }
+
+        }
+    </script>
+
+</body>
+</html>

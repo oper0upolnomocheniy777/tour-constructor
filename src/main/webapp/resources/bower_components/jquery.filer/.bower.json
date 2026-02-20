@@ -1,0 +1,13 @@
+{
+  "name": "jquery.filer",
+  "homepage": "https://github.com/CreativeDream/jQuery.filer",
+  "_release": "6486739e90",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "6486739e90b2df707b2340cb202de65047e7ed19"
+  },
+  "_source": "https://github.com/CreativeDream/jQuery.filer.git",
+  "_target": "master",
+  "_originalSource": "https://github.com/CreativeDream/jQuery.filer.git"
+}

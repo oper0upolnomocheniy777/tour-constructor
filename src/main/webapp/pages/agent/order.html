@@ -1,0 +1,114 @@
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setBundle basename="lang" var="rb" />
+
+<html>
+<head>
+    <title>Tour Agency</title>
+    <c:import url="/resources/components/head.html"/>
+    <link rel="stylesheet" href="/resources/css/tour.css"/>
+</head>
+<body>
+
+<c:import url="/resources/components/navbar.html"/>
+
+<div class="container-fluid">
+    <div class="sidebar-wrapper">
+        <div class="col-md-3 sidebar floating-plane">
+            <c:import url="/resources/components/sidebar.html"/>
+        </div>
+    </div>
+
+    <div class="col-md-11 content">
+        <form method="get" class="col-md-12">
+            <div class="form-group">
+                <label class="col-md-4 control-label">
+                    ID <fmt:message key="purchase" bundle="${rb}"/>
+                </label>
+
+                <div class="col-md-4">
+                    <input type="text" name="id" class="form-control"/>
+                </div>
+
+                <fmt:message key="find" var="find" bundle="${rb}"/>
+                <input type="submit" class="btn btn-contrast pull-right" value="${find}"/>
+            </div>
+        </form>
+
+        <c:if test="${purchase != null}">
+            <div>
+                <h3>${purchase.user.firstName} ${purchase.user.lastName}</h3>
+                <h4>
+                    <fmt:message key="register.telephone" bundle="${rb}"/>:
+                    ${purchase.user.telephone}
+                </h4>
+                <h4><fmt:message key="username" bundle="${rb}"/>
+                    : ${purchase.user.username}</h4>
+                <h4><fmt:message key="tour" bundle="${rb}"/>:
+                    <a href="/tour.html?id=${purchase.tour.id}">
+                    ${purchase.tour.title}</a>
+                </h4>
+                <h4><fmt:message key="date" bundle="${rb}"/>:
+                    ${purchase.date}</h4>
+                <h4>Current status: ${purchase.status}</h4>
+
+                <fmt:message key="order.acknowledge" var="acknowledge" bundle="${rb}"/>
+                <fmt:message key="order.cancel" var="cancel" bundle="${rb}"/>
+                <fmt:message key="order.used" var="used" bundle="${rb}"/>
+                <center>
+                    <form method="post" class="inline">
+                        <input type="hidden" name="action" value="acknowledge"/>
+                        <input type="hidden" name="id" value="${purchase.id}"/>
+                        <input type="submit" class="btn" value="${acknowledge}"/>
+                    </form>
+                    <form method="post" class="inline">
+                        <input type="hidden" name="action" value="cancel"/>
+                        <input type="hidden" name="id" value="${purchase.id}"/>
+                        <input type="submit" class="btn" value="${cancel}"/>
+                    </form>
+                    <form method="post" class="inline">
+                        <input type="hidden" name="action" value="used"/>
+                        <input type="hidden" name="id" value="${purchase.id}"/>
+                        <input type="submit" class="btn" value="${used}"/>
+                    </form>
+                </center>
+
+            </div>
+        </c:if>
+
+        <hr/>
+
+
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Tour</th>
+                <th><fmt:message key="purchase.price" bundle="${rb}"/></th>
+                <th><fmt:message key="purchase.date" bundle="${rb}"/></th>
+                <th><fmt:message key="purchase.status" bundle="${rb}"/></th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach var="purchase" items="${purchases}">
+                <tr>
+                    <td>${purchase.id}</td>
+                    <td>${purchase.user.firstName} ${purchase.user.lastName}</td>
+                    <td>${purchase.user.telephone}</td>
+                    <td>${purchase.tour.title}</td>
+                    <td>$ ${purchase.price.doubleValue()}</td>
+                    <td>${purchase.date}</td>
+                    <td>${purchase.status}</td>
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
