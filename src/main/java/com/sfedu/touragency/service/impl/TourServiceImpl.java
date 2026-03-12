@@ -106,4 +106,9 @@ public class TourServiceImpl extends AbstractDaoService<Tour, Long>
         }
 
     }
+
+    @Override
+    public List<Tour> findAll() {
+        return tourDao.findAll();
+    }
 }

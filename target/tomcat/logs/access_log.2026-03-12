@@ -1,0 +1,2 @@
+0:0:0:0:0:0:0:1 - - [12/Mar/2026:17:45:46 +0300] "GET /login.html?failed=true HTTP/1.1" 200 3063 http-bio-8080-exec-1 1126
+0:0:0:0:0:0:0:1 - - [12/Mar/2026:17:45:46 +0300] "GET /resources/css/new-master.css HTTP/1.1" 404 2515 http-bio-8080-exec-3 197

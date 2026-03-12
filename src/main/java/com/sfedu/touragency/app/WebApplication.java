@@ -49,7 +49,7 @@ public class WebApplication {
 
         readProperties();
         setUpPersistence();
-        createDb();
+        // createDb();
         prepareServices();
 
         SecurityContext.INSTANCE.setUserDao(daoFactory.getUserDao());

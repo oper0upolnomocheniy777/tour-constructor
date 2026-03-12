@@ -36,6 +36,7 @@ com\sfedu\touragency\controller\AgentSetAdminController.class
 com\sfedu\touragency\persistence\util\UserMapper.class
 com\sfedu\touragency\persistence\query\builder\LimitBuilder.class
 com\sfedu\touragency\app\WebApplication.class
+com\sfedu\touragency\controller\api\ToursApiController.class
 com\sfedu\touragency\domain\TourImage.class
 com\sfedu\touragency\controller\AgentToursPageController.class
 com\sfedu\touragency\persistence\query\condition\LikeCondition.class
@@ -79,6 +80,7 @@ com\sfedu\touragency\persistence\query\SelectQuery.class
 com\sfedu\touragency\controller\AgentUsersPageController$UserPurchaseSummaryDto.class
 com\sfedu\touragency\service\impl\ReviewServiceImpl.class
 com\sfedu\touragency\imageprovider\ImageService.class
+com\sfedu\touragency\controller\api\AuthApiController.class
 com\sfedu\touragency\controller\AgentOrderController.class
 com\sfedu\touragency\persistence\util\TourImageMapper.class
 com\sfedu\touragency\persistence\dao\PurchaseDao.class
@@ -118,6 +120,7 @@ com\sfedu\touragency\persistence\dao\jdbc\TourImageJdbcDao.class
 com\sfedu\touragency\security\SecurityContext$SecurityConstraint.class
 com\sfedu\touragency\util\TryOptionalUtil$FailableSupplier.class
 com\sfedu\touragency\dispatcher\RequestService.class
+com\sfedu\touragency\filter\CorsFilter.class
 com\sfedu\touragency\persistence\dao\TourImageDao.class
 com\sfedu\touragency\persistence\dao\ReviewDao.class
 com\sfedu\touragency\security\UserPrincipal.class

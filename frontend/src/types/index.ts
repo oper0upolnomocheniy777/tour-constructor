@@ -51,12 +51,6 @@ export interface TourRoute {
   updatedAt?: string;
 }
 
-export enum TourType {
-  RECREATION = 'RECREATION',
-  EXCURSION = 'EXCURSION',
-  SHOPPING = 'SHOPPING'
-}
-
 export interface Tour {
   id: number;
   title: string;
@@ -69,7 +63,13 @@ export interface Tour {
   avgRating: number;
   votesCount: number;
   discount: number;
-  route?: TourRoute;
+  imageUrl?: string;
+}
+
+export enum TourType {
+  RECREATION = 'RECREATION',
+  EXCURSION = 'EXCURSION',
+  SHOPPING = 'SHOPPING'
 }
 
 export interface Purchase {

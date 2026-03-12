@@ -30,6 +30,7 @@ C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Dip
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\persistence\query\condition\AndCondition.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\persistence\dao\jdbc\TourImageJdbcDao.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\controller\LogoutController.java
+C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\filter\CorsFilter.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\persistence\dao\factory\JdbcDaoFactory.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\service\impl\ReviewServiceImpl.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\service\impl\TourServiceImpl.java
@@ -47,6 +48,7 @@ C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Dip
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\service\impl\PurchaseServiceImpl.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\imageprovider\ImageProviderServlet.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\controller\AgentEditTourController.java
+C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\controller\api\AuthApiController.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\service\TourService.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\controller\TourController.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\persistence\util\UserMapper.java
@@ -96,6 +98,7 @@ C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Dip
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\persistence\query\builder\QueryBuilder.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\security\SecurityContext.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\controller\AgentToursPageController.java
+C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\controller\api\ToursApiController.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\domain\User.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\util\TextShrinker.java
 C:\Users\brosl\OneDrive\Изображения\Рабочий стол\Study\Diplom\tour-conctructor\src\main\java\com\sfedu\touragency\util\WithStatus.java

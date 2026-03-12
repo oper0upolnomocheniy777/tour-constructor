@@ -20,6 +20,8 @@ public class TourJdbcDao implements TourDao {
 
     private JdbcTemplate jdbcTemplate;
 
+    private TourMapper tourMapper = new TourMapper();
+
     public TourJdbcDao(ConnectionManager connectionManager) {
         this.connectionManager = connectionManager;
         this.jdbcTemplate = new JdbcTemplate(connectionManager);
@@ -88,4 +90,5 @@ public class TourJdbcDao implements TourDao {
         return jdbcTemplate.queryObjects(filter.getQuery(), TourMapper::map,
                 (Object[]) params);
     }
+
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LoginForm } from './components/Auth/LoginForm';
@@ -6,8 +6,87 @@ import { RegisterForm } from './components/Auth/RegisterForm';
 import { Navbar } from './components/Layout/Navbar';
 import { TourConstructorYandex } from './components/Constructor/TourConstructorYandex';
 import './App.css';
+import { TourCard } from './components/Tours/TourCard';
+import { Tour, TourType } from './types';
+import './ToursPage.css';
 
-const ToursPage = () => <div className="page-container">Список туров (в разработке)</div>;
+// Временно добавим мок-данные
+const MOCK_TOURS: Tour[] = [
+  {
+    id: 1,
+    title: 'Путешествие в Париж',
+    description: 'Посетите город любви и романтики. Эйфелева башня, Лувр, Монмартр и многое другое.',
+    destination: 'Франция, Париж',
+    type: TourType.EXCURSION,
+    hot: true,
+    price: 45000,
+    enabled: true,
+    avgRating: 4.5,
+    votesCount: 128,
+    discount: 10,
+    imageUrl: 'https://example.com/paris.jpg'
+  },
+  {
+    id: 2,
+    title: 'Отдых в Сочи',
+    description: 'Черное море, горы, парки и развлечения для всей семьи.',
+    destination: 'Россия, Сочи',
+    type: TourType.RECREATION,
+    hot: false,
+    price: 35000,
+    enabled: true,
+    avgRating: 4.2,
+    votesCount: 89,
+    discount: 0,
+    imageUrl: ''
+  },
+  {
+    id: 3,
+    title: 'Шоппинг в Милане',
+    description: 'Лучшие бренды, аутлеты и итальянская кухня.',
+    destination: 'Италия, Милан',
+    type: TourType.SHOPPING,
+    hot: false,
+    price: 55000,
+    enabled: true,
+    avgRating: 4.7,
+    votesCount: 56,
+    discount: 5,
+    imageUrl: ''
+  }
+];
+
+const ToursPage: React.FC = () => {
+  const [tours, setTours] = useState<Tour[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Здесь будет запрос к API
+    setTimeout(() => {
+      setTours(MOCK_TOURS);
+      setLoading(false);
+    }, 500);
+  }, []);
+
+  if (loading) {
+    return <div className="loading">Загрузка туров...</div>;
+  }
+
+  return (
+    <div className="tours-page">
+      <div className="tours-header">
+        <h1>Наши туры</h1>
+        <p>Выберите идеальное путешествие</p>
+      </div>
+
+      <div className="tours-grid">
+        {tours.map(tour => (
+          <TourCard key={tour.id} tour={tour} />
+        ))}
+      </div>
+    </div>
+  );
+};
 const MyToursPage = () => <div className="page-container">Мои туры (в разработке)</div>;
 
 const LoadingSpinner = () => (

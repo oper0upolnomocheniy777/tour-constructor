@@ -12,4 +12,6 @@ public interface TourDao extends Dao<Tour, Long> {
     Tour findRandomHot();
 
     List<Tour> executeDynamicFilter(ToursDynamicFilter filter);
+
+    List<Tour> findAll();
 }

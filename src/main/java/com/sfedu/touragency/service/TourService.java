@@ -15,4 +15,6 @@ public interface TourService extends CrudService<Tour, Long> {
     BigDecimal computePrice(Long tourId, Long userId);
 
     List<Tour> executeDynamicFilter(ToursDynamicFilter filter);
+
+    List<Tour> findAll();
 }
