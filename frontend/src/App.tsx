@@ -8,8 +8,8 @@ import { TourConstructorYandex } from './components/Constructor/TourConstructorY
 import './App.css';
 import { TourCard } from './components/Tours/TourCard';
 import { Tour, TourType } from './types';
-import './ToursPage.css';
-
+import './pages/ToursPage.css';
+import ToursPage from './pages/ToursPage';
 // Временно добавим мок-данные
 const MOCK_TOURS: Tour[] = [
   {
@@ -56,37 +56,6 @@ const MOCK_TOURS: Tour[] = [
   }
 ];
 
-const ToursPage: React.FC = () => {
-  const [tours, setTours] = useState<Tour[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Здесь будет запрос к API
-    setTimeout(() => {
-      setTours(MOCK_TOURS);
-      setLoading(false);
-    }, 500);
-  }, []);
-
-  if (loading) {
-    return <div className="loading">Загрузка туров...</div>;
-  }
-
-  return (
-    <div className="tours-page">
-      <div className="tours-header">
-        <h1>Наши туры</h1>
-        <p>Выберите идеальное путешествие</p>
-      </div>
-
-      <div className="tours-grid">
-        {tours.map(tour => (
-          <TourCard key={tour.id} tour={tour} />
-        ))}
-      </div>
-    </div>
-  );
-};
 const MyToursPage = () => <div className="page-container">Мои туры (в разработке)</div>;
 
 const LoadingSpinner = () => (
