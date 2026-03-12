@@ -1,53 +1,133 @@
-# Application
+# 🗺️ Конструктор туров
 
-A simple Web Service for a Tour Agency
+Веб-сервис для планирования путешествий с визуальным конструированием маршрутов. Позволяет создавать интерактивные маршруты на карте, управлять точками и сохранять готовые туры.
 
-# Description
+## ✨ Возможности
 
-Система Турагентство
-Заказчик выбирает и оплачивает Тур (отдых,экскурсия, шоппинг).
-Турагент определяет тур как «горящий»,размеры скидок постоянным клиентам.
+- 🔐 **Авторизация и регистрация** — разделение ролей (пользователь/агент)
+- 🗺️ **Интерактивная карта** на Яндекс.Картах
+- 📍 **Добавление точек маршрута** кликом по карте
+- 🔄 **Drag-and-drop** для изменения порядка точек
+- 🚗 **Построение маршрута** с расчетом расстояния и времени
+- 💾 **Сохранение туров** в личном кабинете
+- 📋 **Просмотр списка туров** с фильтрацией
+- ⭐ **Отзывы и рейтинги** туров
+- 🛒 **Покупка туров** со скидками для постоянных клиентов
 
-# Features
+## 🛠️ Технологии
 
-- Creating/editing tours
-- Enabling/disabling tours
-- Purchases
-- Login/registration
-- Two roles: user, tour agent
-- Personal discounts
+**Frontend:**
+- React 18 + TypeScript
+- React Router — навигация
+- Яндекс.Карты API — карты и маршруты
+- dnd-kit — drag-and-drop
+- React Hook Form — формы
+- Axios — HTTP-запросы
 
-# Technologies
-
-- Servlet
-- JSP
-- JDBC
+**Backend:**
+- Java (Servlets)
 - MySQL
-- JQuery
-- Maven, Bower
-
-# Build & Run
-
-## Requirements
-
+- JDBC
 - Maven
-- Bower
 
-Before building and running you should have bower installed
+## 🚀 Быстрый старт
 
-## Database
+### Требования
+- Node.js 18+
+- Java 11+
+- MySQL 8+
+- Maven
 
-You can change login credentials in ```webapp/META-INF/context.xml```
+### Установка
 
-If it doesn't work you should try modify ```resources/database.properties```
-(just leaving this there in case I would use this file in the future and
-would forget to update README.md)
+```bash
+# Клонируем репозиторий
+git clone https://github.com/oper0upolnomocheniy777/tour-constructor
+cd tour-constructor
 
-## Tomcat
+# Настройка бэкенда
+# 1. Создайте базу данных MySQL
+# 2. Обновите database.properties
+# 3. Соберите проект
+mvn clean package
 
-The repository ship with tomcat7 maven plugin, so you could run the 
-application simply doing:
-    ```
-    mvn install
-    mvn tomcat7:run
-    ```
+# Настройка фронтенда
+cd frontend
+npm install
+cp .env.example .env  # добавьте API ключ Яндекс Карт
+npm start
+```
+
+### Переменные окружения
+
+Создайте `.env` в папке frontend:
+
+```env
+REACT_APP_API_URL=http://localhost:8080/api
+REACT_APP_YANDEX_MAPS_API_KEY=ваш_ключ_яндекс_карт
+```
+
+## 📖 Использование
+
+1. **Регистрация/вход** — создайте аккаунт или войдите под тестовым пользователем
+2. **Конструктор** — кликайте по карте, чтобы добавить точки, перетаскивайте их для изменения порядка
+3. **Сохранение** — добавьте название, описание и цену тура, сохраните в личный кабинет
+4. **Покупка** — выберите тур из списка, оформите покупку
+5. **Отзывы** — оцените купленные туры и оставьте отзывы
+
+## 📁 Структура проекта
+
+```
+tour-constructor/
+├── frontend/               # React приложение
+│   ├── src/
+│   │   ├── components/     # React компоненты
+│   │   │   ├── Auth/       # Вход/регистрация
+│   │   │   ├── Constructor/# Конструктор маршрутов
+│   │   │   ├── Map/        # Яндекс Карты
+│   │   │   ├── Tours/      # Список туров
+│   │   │   └── Layout/     # Шапка, навигация
+│   │   ├── context/        # Контексты (Auth)
+│   │   ├── services/       # API клиенты
+│   │   ├── types/          # TypeScript типы
+│   │   └── App.tsx
+│   └── package.json
+│
+└── src/                    # Java бэкенд
+    ├── main/
+    │   ├── java/
+    │   │   └── com/sfedu/touragency/
+    │   │       ├── controller/    # Сервлеты
+    │   │       ├── domain/        # Модели
+    │   │       ├── persistence/   # DAO
+    │   │       └── service/       # Бизнес-логика
+    │   └── webapp/         # JSP (легаси)
+    └── test/               # Тесты
+```
+
+## 👥 Роли
+
+- **Пользователь** — создает туры, покупает, оставляет отзывы
+- **Агент** — управляет турами, подтверждает покупки
+
+## 🧪 Тестовые данные
+
+```
+Пользователь:
+Логин: user
+Пароль: 123456
+
+Агент:
+Логин: agent
+Пароль: 123456
+```
+
+
+## 👩‍💻 Автор
+
+**Брославцева Ксения Сергеевна**  
+Южный федеральный университет  
+Институт математики, механики и компьютерных наук им. И.И. Воровича  
+Направление: 02.03.02 — Фундаментальная информатика и информационные технологии
+
+Научный руководитель: к.пед.н., доцент Кувшинова Екатерина Николаевна
