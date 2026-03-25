@@ -41,16 +41,6 @@ export interface RoutePoint {
   tourId?: number;
 }
 
-export interface TourRoute {
-  id?: number;
-  tourId?: number;
-  points: RoutePoint[];
-  totalDistance?: number;
-  totalDuration?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
 export interface Tour {
   id: number;
   title: string;
@@ -64,6 +54,17 @@ export interface Tour {
   votesCount: number;
   discount: number;
   imageUrl?: string;
+  route?: TourRoute; 
+}
+
+export interface TourRoute {
+  id?: number;
+  tourId?: number;
+  points: RoutePoint[];
+  totalDistance?: number;
+  totalDuration?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export enum TourType {

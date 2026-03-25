@@ -76,11 +76,6 @@ function AppContent() {
   const { loading } = useAuth();
   if (loading) return <LoadingSpinner />;
 
-  const handleSaveRoute = (route: any) => {
-    console.log('Сохранение маршрута:', route);
-    alert('Маршрут сохранен! (тестовый режим)');
-  };
-
   const YANDEX_MAPS_API_KEY = process.env.REACT_APP_YANDEX_MAPS_API_KEY || '';
 
   return (
@@ -94,12 +89,12 @@ function AppContent() {
           <Route path="/my-tours" element={<PrivateRoute><MyToursPage /></PrivateRoute>} />
           <Route path="/constructor" element={
             <PrivateRoute>
-              <TourConstructorYandex apiKey={YANDEX_MAPS_API_KEY} onSave={handleSaveRoute} />
+              <TourConstructorYandex apiKey={YANDEX_MAPS_API_KEY}/>
             </PrivateRoute>
           } />
           <Route path="/constructor/:id" element={
             <PrivateRoute>
-              <TourConstructorYandex apiKey={YANDEX_MAPS_API_KEY} onSave={handleSaveRoute} />
+              <TourConstructorYandex apiKey={YANDEX_MAPS_API_KEY} />
             </PrivateRoute>
           } />
           <Route path="/" element={<Navigate to="/tours" />} />

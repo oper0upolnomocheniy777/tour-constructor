@@ -1,25 +1,25 @@
 import React, { useState, useCallback } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { YandexMapComponent, RoutePoint as YandexRoutePoint } from '../Map/YandexMap';
+import { YandexMapComponent, RoutePoint } from '../Map/YandexMap';
 import { RoutePointList, RoutePointItem } from './RoutePointList';
-import { TourRoute, RoutePoint } from '../../types';
+import { SaveTourModal } from './SaveTourModal';
+import { TourRoute, TourType } from '../../types';
+import { saveUserTour, SaveTourData } from '../../services/tourStorage';
 import './TourConstructor.css';
 
 interface TourConstructorYandexProps {
   initialRoute?: TourRoute;
-  onSave?: (route: TourRoute) => void;
   tourId?: number;
   apiKey: string;
 }
 
 export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
   initialRoute,
-  onSave,
   tourId,
   apiKey
 }) => {
-  const [points, setPoints] = useState<YandexRoutePoint[]>(
-    initialRoute?.points.map((p: RoutePoint) => ({
+  const [points, setPoints] = useState<RoutePoint[]>(
+    initialRoute?.points.map((p: any) => ({
       id: p.id,
       name: p.name,
       position: [p.longitude, p.latitude] as [number, number],
@@ -29,9 +29,10 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
   );
   
   const [routeInfo, setRouteInfo] = useState<{ distance: string; duration: string } | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [pointForm, setPointForm] = useState<{
     open: boolean;
-    point?: YandexRoutePoint;
+    point?: RoutePoint;
     name: string;
     description: string;
   }>({
@@ -40,17 +41,18 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
     description: ''
   });
 
-
-  const handleMapClick = useCallback((position: [number, number]) => {
-  const newPoint: YandexRoutePoint = {
-    id: uuidv4(),
-    name: `Точка ${points.length + 1}`, 
-    position: position,
-    order: points.length,
-    description: '',
-  };
-  setPoints(prev => [...prev, newPoint]);
-}, [points.length]);
+ const handleMapClick = useCallback((position: [number, number]) => {
+  setPoints(prev => {
+    const newPoint: RoutePoint = {
+      id: uuidv4(),
+      name: `Точка ${prev.length + 1}`,
+      position: position,
+      order: prev.length,
+      description: '',
+    };
+    return [...prev, newPoint];
+  });
+}, []);
 
   const handleMarkerDragEnd = useCallback((id: string, position: [number, number]) => {
     setPoints(prev =>
@@ -72,7 +74,7 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
     });
   }, []);
 
-  const handleEditPoint = useCallback((point: YandexRoutePoint) => {
+  const handleEditPoint = useCallback((point: RoutePoint) => {
     setPointForm({
       open: true,
       point,
@@ -95,7 +97,7 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
   }, [pointForm]);
 
   const handleReorder = useCallback((reordered: RoutePointItem[]) => {
-    const yandexPoints: YandexRoutePoint[] = reordered.map(p => ({
+    const yandexPoints: RoutePoint[] = reordered.map(p => ({
       id: p.id,
       name: p.name,
       description: p.description,
@@ -105,31 +107,48 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
     setPoints(yandexPoints);
   }, []);
 
-  const handleSaveRoute = useCallback(() => {
-    if (onSave && points.length > 0) {
-      const routePoints: RoutePoint[] = points.map(p => ({
-        id: p.id,
-        name: p.name,
-        description: p.description,
-        latitude: p.position[1],
-        longitude: p.position[0],
-        order: p.order,
-        tourId
-      }));
-
-      const route: TourRoute = {
-        tourId,
-        points: routePoints,
-        totalDistance: routeInfo ? parseFloat(routeInfo.distance) : undefined,
-        totalDuration: routeInfo?.duration
-      };
-      onSave(route);
-    }
-  }, [points, routeInfo, tourId, onSave]);
-
   const handleRouteCalculated = useCallback((distance: string, duration: string) => {
     setRouteInfo({ distance, duration });
   }, []);
+
+  const handleSaveTour = (tourData: {
+  title: string;
+  description: string;
+  destination: string;
+  price: number;
+  type: TourType;
+}) => {
+  // Преобразуем точки маршрута в формат для сохранения
+  const routePoints = points.map(p => ({
+    id: p.id,
+    name: p.name,
+    description: p.description,
+    latitude: p.position[1],
+    longitude: p.position[0],
+    order: p.order
+  }));
+
+  const route: TourRoute = {
+    points: routePoints,
+    totalDistance: routeInfo ? parseFloat(routeInfo.distance) : undefined,
+    totalDuration: routeInfo?.duration
+  };
+
+  const saveData: SaveTourData = {
+    title: tourData.title,
+    description: tourData.description,
+    destination: tourData.destination,
+    price: tourData.price,
+    type: tourData.type,
+    route: route
+  };
+
+  const newTour = saveUserTour(saveData);
+
+  console.log('Тур сохранен:', newTour);
+  alert(`Тур "${newTour.title}" успешно сохранен!`);
+  setIsModalOpen(false);
+};
 
   // Преобразуем YandexRoutePoint в RoutePointItem для списка
   const pointItems: RoutePointItem[] = points.map(p => ({
@@ -145,12 +164,21 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
     <div className="tour-constructor">
       <div className="constructor-header">
         <h2>Конструктор маршрута</h2>
-        {routeInfo && (
-          <div className="route-info">
-            <span>📏 {routeInfo.distance}</span>
-            <span>⏱️ {routeInfo.duration}</span>
-          </div>
-        )}
+        <div className="header-actions">
+          {routeInfo && (
+            <div className="route-info">
+              <span>📏 {routeInfo.distance}</span>
+              <span>⏱️ {routeInfo.duration}</span>
+            </div>
+          )}
+          <button 
+            className="btn-save-tour"
+            onClick={() => setIsModalOpen(true)}
+            disabled={points.length < 2}
+          >
+            💾 Сохранить тур
+          </button>
+        </div>
       </div>
 
       <div className="constructor-layout">
@@ -168,13 +196,9 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
         <div className="points-section">
           <div className="points-header">
             <h3>Точки маршрута ({points.length})</h3>
-            <button
-              className="btn-save"
-              onClick={handleSaveRoute}
-              disabled={points.length < 2}
-            >
-              Сохранить маршрут
-            </button>
+            <p className="points-hint">
+              {points.length < 2 ? 'Добавьте минимум 2 точки для построения маршрута' : ''}
+            </p>
           </div>
 
           <RoutePointList
@@ -191,6 +215,7 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
         </div>
       </div>
 
+      {/* Модальное окно редактирования точки */}
       {pointForm.open && (
         <div className="modal-overlay" onClick={() => setPointForm({ open: false, name: '', description: '' })}>
           <div className="modal-content" onClick={e => e.stopPropagation()}>
@@ -228,6 +253,13 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
           </div>
         </div>
       )}
+
+      {/* Модальное окно сохранения тура */}
+      <SaveTourModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveTour}
+      />
     </div>
   );
 };
