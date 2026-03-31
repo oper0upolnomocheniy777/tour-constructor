@@ -46,7 +46,7 @@ export const saveUserTour = (data: SaveTourData): Tour => {
   return newTour;
 };
 
-// Обновить тур
+// Обновить тур 
 export const updateUserTour = (id: number, updates: Partial<Tour>): Tour | null => {
   const tours = getUserTours();
   const index = tours.findIndex(t => t.id === id);
@@ -70,4 +70,3 @@ export const getUserTour = (id: number): Tour | undefined => {
   const tours = getUserTours();
   return tours.find(t => t.id === id);
 };
-

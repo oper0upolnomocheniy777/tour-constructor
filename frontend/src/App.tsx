@@ -10,6 +10,13 @@ import { TourCard } from './components/Tours/TourCard';
 import { Tour, TourType } from './types';
 import './pages/ToursPage.css';
 import ToursPage from './pages/ToursPage';
+import { MyToursPage } from './pages/MyToursPage';
+import { EditTourPage } from './pages/EditTourPage';
+import { TourDetailPage } from './pages/TourDetailPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { MyPurchasesPage } from './pages/MyPurchasesPage';
+
+
 // Временно добавим мок-данные
 const MOCK_TOURS: Tour[] = [
   {
@@ -56,8 +63,6 @@ const MOCK_TOURS: Tour[] = [
   }
 ];
 
-const MyToursPage = () => <div className="page-container">Мои туры (в разработке)</div>;
-
 const LoadingSpinner = () => (
   <div className="loading-container">
     <div className="spinner"></div>
@@ -86,7 +91,11 @@ function AppContent() {
           <Route path="/login" element={<LoginForm />} />
           <Route path="/register" element={<RegisterForm />} />
           <Route path="/tours" element={<ToursPage />} />
-          <Route path="/my-tours" element={<PrivateRoute><MyToursPage /></PrivateRoute>} />
+          <Route path="/my-tours" element={
+           <PrivateRoute>
+             <MyToursPage />
+           </PrivateRoute>
+          } />
           <Route path="/constructor" element={
             <PrivateRoute>
               <TourConstructorYandex apiKey={YANDEX_MAPS_API_KEY}/>
@@ -97,8 +106,28 @@ function AppContent() {
               <TourConstructorYandex apiKey={YANDEX_MAPS_API_KEY} />
             </PrivateRoute>
           } />
+          <Route path="/edit-tour/:id" element={
+           <PrivateRoute>
+              <EditTourPage />
+            </PrivateRoute>
+          } />
           <Route path="/" element={<Navigate to="/tours" />} />
           <Route path="*" element={<Navigate to="/tours" />} />
+          <Route path="/tour/:id" element={
+            <PrivateRoute>
+              <TourDetailPage />
+            </PrivateRoute>
+          } />
+          <Route path="/checkout/:id" element={
+            <PrivateRoute>
+              <CheckoutPage />
+            </PrivateRoute>
+          } />
+          <Route path="/my-purchases" element={
+            <PrivateRoute>
+              <MyPurchasesPage />
+            </PrivateRoute>
+          } />
         </Routes>
       </div>
     </>

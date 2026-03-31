@@ -11,7 +11,6 @@ export const Navbar: React.FC = () => {
     navigate('/login');
   };
 
-  // Безопасное получение имени пользователя
   const getUserDisplayName = () => {
     if (!user) return '';
     if (user.firstName && user.lastName) {
@@ -20,7 +19,6 @@ export const Navbar: React.FC = () => {
     return user.username;
   };
 
-  // Безопасное получение скидки
   const userDiscount = user?.discount ?? 0;
 
   return (
@@ -39,6 +37,9 @@ export const Navbar: React.FC = () => {
             <>
               <Link to="/my-tours" className="nav-link">
                 Мои туры
+              </Link>
+              <Link to="/my-purchases" className="nav-link">
+                Мои покупки
               </Link>
               <Link to="/constructor" className="nav-link">
                 Конструктор

@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { YandexMapComponent, RoutePoint } from '../Map/YandexMap';
 import { RoutePointList, RoutePointItem } from './RoutePointList';
 import { SaveTourModal } from './SaveTourModal';
 import { TourRoute, TourType } from '../../types';
-import { saveUserTour, SaveTourData } from '../../services/tourStorage';
+import { saveUserTour, updateUserTour, SaveTourData, getUserTour } from '../../services/tourStorage';
 import './TourConstructor.css';
 
 interface TourConstructorYandexProps {
@@ -18,18 +18,52 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
   tourId,
   apiKey
 }) => {
-  const [points, setPoints] = useState<RoutePoint[]>(
-    initialRoute?.points.map((p: any) => ({
-      id: p.id,
-      name: p.name,
-      position: [p.longitude, p.latitude] as [number, number],
-      order: p.order,
-      description: p.description
-    })) || []
-  );
+ const [points, setPoints] = useState<RoutePoint[]>(() => {
+    if (initialRoute?.points) {
+      return initialRoute.points.map(p => ({
+        id: p.id,
+        name: p.name,
+        position: [p.longitude, p.latitude] as [number, number],
+        order: p.order,
+        description: p.description
+      }));
+    }
+    return [];
+  });
   
   const [routeInfo, setRouteInfo] = useState<{ distance: string; duration: string } | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+const [editingTour, setEditingTour] = useState<{
+  title: string;
+  description: string;
+  destination: string;
+  price: number;
+  type: TourType;
+} | null>(null);
+
+// Загружаем данные тура при редактировании (НЕ открываем модалку)
+useEffect(() => {
+  if (tourId) {
+    const tour = getUserTour(tourId);
+    if (tour) {
+      setEditingTour({
+        title: tour.title,
+        description: tour.description,
+        destination: tour.destination,
+        price: tour.price,
+        type: tour.type
+      });
+      // НЕ открываем модалку здесь!
+    }
+  }
+}, [tourId]);
+
+// Функция открытия модального окна (вызывается по кнопке)
+const openSaveModal = () => {
+  console.log('Opening modal, editingTour:', editingTour);
+  setIsModalOpen(true);
+};
+
   const [pointForm, setPointForm] = useState<{
     open: boolean;
     point?: RoutePoint;
@@ -111,7 +145,7 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
     setRouteInfo({ distance, duration });
   }, []);
 
-  const handleSaveTour = (tourData: {
+const handleSaveTour = (tourData: {
   title: string;
   description: string;
   destination: string;
@@ -134,20 +168,39 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
     totalDuration: routeInfo?.duration
   };
 
-  const saveData: SaveTourData = {
-    title: tourData.title,
-    description: tourData.description,
-    destination: tourData.destination,
-    price: tourData.price,
-    type: tourData.type,
-    route: route
-  };
+  if (tourId) {
+    // Редактируем существующий тур
+    const updated = updateUserTour(tourId, {
+      title: tourData.title,
+      description: tourData.description,
+      destination: tourData.destination,
+      price: tourData.price,
+      type: tourData.type,
+      route: route
+    });
+    
+    if (updated) {
+      alert(`Тур "${updated.title}" успешно обновлен!`);
+    } else {
+      alert('Ошибка при обновлении тура');
+    }
+  } else {
+    // Создаем новый тур
+    const saveData: SaveTourData = {
+      title: tourData.title,
+      description: tourData.description,
+      destination: tourData.destination,
+      price: tourData.price,
+      type: tourData.type,
+      route: route
+    };
 
-  const newTour = saveUserTour(saveData);
-
-  console.log('Тур сохранен:', newTour);
-  alert(`Тур "${newTour.title}" успешно сохранен!`);
-  setIsModalOpen(false);
+    const newTour = saveUserTour(saveData);
+    alert(`Тур "${newTour.title}" успешно сохранен!`);
+  }
+  
+  setIsModalOpen(false); // Это должно закрыть модальное окно
+  setEditingTour(null);   // Сбрасываем редактируемый тур
 };
 
   // Преобразуем YandexRoutePoint в RoutePointItem для списка
@@ -172,12 +225,12 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
             </div>
           )}
           <button 
-            className="btn-save-tour"
-            onClick={() => setIsModalOpen(true)}
-            disabled={points.length < 2}
-          >
-            💾 Сохранить тур
-          </button>
+  className="btn-save-tour"
+  onClick={openSaveModal}  
+  disabled={points.length < 2}
+>
+  💾 Сохранить тур
+</button>
         </div>
       </div>
 
@@ -254,12 +307,20 @@ export const TourConstructorYandex: React.FC<TourConstructorYandexProps> = ({
         </div>
       )}
 
-      {/* Модальное окно сохранения тура */}
-      <SaveTourModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSave={handleSaveTour}
-      />
+     {/* Модальное окно сохранения тура */}
+{isModalOpen && (
+  <SaveTourModal
+    isOpen={isModalOpen}
+    onClose={() => {
+      console.log('Closing modal');
+      setIsModalOpen(false);
+    }}
+    onSave={handleSaveTour}
+    initialData={editingTour}
+  />
+)}
     </div>
   );
+
+  console.log('TourConstructor render, tourId:', tourId, 'editingTour:', editingTour, 'isModalOpen:', isModalOpen);
 };

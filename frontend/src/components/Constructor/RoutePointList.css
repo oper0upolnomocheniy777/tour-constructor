@@ -1,0 +1,142 @@
+.route-points-list {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.route-point {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  background: white;
+  transition: background-color 0.2s;
+}
+
+.route-point:last-child {
+  border-bottom: none;
+}
+
+.route-point:hover {
+  background-color: #f8f9fa;
+}
+
+.route-point.dragging {
+  opacity: 0.5;
+  background: #e3f2fd;
+}
+
+.point-drag-handle {
+  cursor: grab;
+  color: #999;
+  padding: 8px;
+  margin-right: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  user-select: none;
+  line-height: 1;
+}
+
+.point-drag-handle:active {
+  cursor: grabbing;
+}
+
+.point-number {
+  width: 28px;
+  height: 28px;
+  background-color: #3498db;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.point-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.point-name {
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.point-description {
+  font-size: 0.85rem;
+  color: #666;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.point-coordinates {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.point-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  padding: 6px;
+  cursor: pointer;
+  border-radius: 4px;
+  color: #999;
+  transition: all 0.2s;
+  font-size: 16px;
+}
+
+.btn-icon:hover {
+  background-color: #f0f0f0;
+}
+
+.btn-icon.edit:hover {
+  color: #3498db;
+}
+
+.btn-icon.remove:hover {
+  color: #e74c3c;
+}
+
+.route-points-empty {
+  text-align: center;
+  padding: 40px 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  color: #999;
+}
+
+.points-hint {
+  font-size: 0.8rem;
+  color: #e74c3c;
+  margin: 8px 0 0 0;
+}
+
+.points-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.points-header h3 {
+  margin: 0;
+  color: #2c3e50;
+}

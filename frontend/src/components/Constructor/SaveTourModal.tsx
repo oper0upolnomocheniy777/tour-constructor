@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TourType } from '../../types';
 import './SaveTourModal.css';
 
@@ -12,12 +12,20 @@ interface SaveTourModalProps {
     price: number;
     type: TourType;
   }) => void;
+  initialData?: {
+    title: string;
+    description: string;
+    destination: string;
+    price: number;
+    type: TourType;
+  } | null;
 }
 
 export const SaveTourModal: React.FC<SaveTourModalProps> = ({
   isOpen,
   onClose,
-  onSave
+  onSave,
+  initialData
 }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -26,7 +34,23 @@ export const SaveTourModal: React.FC<SaveTourModalProps> = ({
   const [type, setType] = useState<TourType>(TourType.RECREATION);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  if (!isOpen) return null;
+  // Загружаем начальные данные при открытии
+  useEffect(() => {
+  console.log('Modal opened, initialData:', initialData);
+  if (initialData) {
+    setTitle(initialData.title);
+    setDescription(initialData.description);
+    setDestination(initialData.destination);
+    setPrice(initialData.price.toString());
+    setType(initialData.type);
+  } else {
+    setTitle('');
+    setDescription('');
+    setDestination('');
+    setPrice('');
+    setType(TourType.RECREATION);
+  }
+}, [initialData, isOpen]); 
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -43,25 +67,18 @@ export const SaveTourModal: React.FC<SaveTourModalProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validate()) return;
-    
-    onSave({
-      title: title.trim(),
-      description: description.trim(),
-      destination: destination.trim(),
-      price: Number(price),
-      type
-    });
-    
-    // Сбрасываем форму
-    setTitle('');
-    setDescription('');
-    setDestination('');
-    setPrice('');
-    setType(TourType.RECREATION);
-    setErrors({});
+ const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!validate()) return;
+  
+  onSave({
+    title: title.trim(),
+    description: description.trim(),
+    destination: destination.trim(),
+    price: Number(price),
+    type
+  });
+  
   };
 
   return (

@@ -1,4 +1,24 @@
 import React from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy
+} from '@dnd-kit/sortable';
+import {
+  useSortable
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+import './RoutePointList.css';
 
 export interface RoutePointItem {
   id: string;
@@ -16,81 +36,136 @@ interface RoutePointListProps {
   onEdit: (point: RoutePointItem) => void;
 }
 
+interface SortablePointProps {
+  point: RoutePointItem;
+  index: number;
+  onRemove: (id: string) => void;
+  onEdit: (point: RoutePointItem) => void;
+}
+
+const SortablePoint: React.FC<SortablePointProps> = ({ point, index, onRemove, onEdit }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging
+  } = useSortable({ id: point.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 999 : 'auto',
+    cursor: isDragging ? 'grabbing' : 'grab'
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`route-point ${isDragging ? 'dragging' : ''}`}
+    >
+      <div className="point-drag-handle" {...attributes} {...listeners}>
+        ⋮⋮
+      </div>
+      
+      <div className="point-number">{index + 1}</div>
+      
+      <div className="point-content">
+        <div className="point-name">{point.name || 'Без названия'}</div>
+        {point.description && (
+          <div className="point-description">{point.description}</div>
+        )}
+        <div className="point-coordinates">
+          {point.latitude.toFixed(4)}, {point.longitude.toFixed(4)}
+        </div>
+      </div>
+
+      <div className="point-actions">
+        <button
+          onClick={() => onEdit(point)}
+          className="btn-icon edit"
+          title="Редактировать"
+        >
+          ✏️
+        </button>
+        <button
+          onClick={() => onRemove(point.id)}
+          className="btn-icon remove"
+          title="Удалить"
+        >
+          🗑️
+        </button>
+      </div>
+    </div>
+  );
+};
+
 export const RoutePointList: React.FC<RoutePointListProps> = ({
   points,
+  onReorder,
   onRemove,
   onEdit
 }) => {
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = points.findIndex((p) => p.id === active.id);
+      const newIndex = points.findIndex((p) => p.id === over.id);
+      
+      const reordered = arrayMove(points, oldIndex, newIndex);
+      const updated = reordered.map((point, idx) => ({
+        ...point,
+        order: idx
+      }));
+      onReorder(updated);
+    }
+  };
+
   if (points.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '40px 20px', color: '#999' }}>
+      <div className="route-points-empty">
         <p>Кликните на карту, чтобы добавить точку маршрута</p>
       </div>
     );
   }
 
   return (
-    <div style={{ background: 'white', borderRadius: '8px', maxHeight: '500px', overflowY: 'auto' }}>
-      {points.map((point, index) => (
-        <div
-          key={point.id}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '12px',
-            borderBottom: '1px solid #eee'
-          }}
-        >
-          <div style={{
-            width: '28px',
-            height: '28px',
-            backgroundColor: '#3498db',
-            color: 'white',
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: '12px'
-          }}>
-            {index + 1}
-          </div>
-          
-          <div style={{ flex: 1 }}>
-            <div style={{ fontWeight: 500 }}>{point.name}</div>
-            {point.description && (
-              <div style={{ fontSize: '0.9rem', color: '#666' }}>{point.description}</div>
-            )}
-          </div>
-
-          <div>
-            <button
-              onClick={() => onEdit(point)}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '6px',
-                cursor: 'pointer',
-                color: '#999',
-                marginRight: '8px'
-              }}
-            >
-              ✏️
-            </button>
-            <button
-              onClick={() => onRemove(point.id)}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '6px',
-                cursor: 'pointer',
-                color: '#999'
-              }}
-            >
-              🗑️
-            </button>
-          </div>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext
+        items={points.map(p => p.id)}
+        strategy={verticalListSortingStrategy}
+      >
+        <div className="route-points-list">
+          {points.map((point, index) => (
+            <SortablePoint
+              key={point.id}
+              point={point}
+              index={index}
+              onRemove={onRemove}
+              onEdit={onEdit}
+            />
+          ))}
         </div>
-      ))}
-    </div>
+      </SortableContext>
+    </DndContext>
   );
 };
