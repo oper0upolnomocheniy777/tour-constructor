@@ -11,6 +11,15 @@ const users: any[] = [
     lastName: 'Тестов',
     roles: [Role.CUSTOMER], // Используем enum, а не строку
     discount: 0
+  },
+  {
+    id: 2,
+    username: 'agent',
+    password: '123456',
+    firstName: 'Агент',
+    lastName: 'Туров',
+    roles: [Role.TOUR_AGENT],
+    discount: 0
   }
 ];
 

@@ -1,0 +1,102 @@
+.review-form {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.review-form h3 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+}
+
+.rating-input {
+  margin-bottom: 20px;
+}
+
+.rating-input label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.stars-input {
+  display: flex;
+  gap: 8px;
+  font-size: 28px;
+}
+
+.stars-input .star {
+  cursor: pointer;
+  color: #ddd;
+  transition: color 0.2s;
+}
+
+.stars-input .star.selected {
+  color: #f1c40f;
+}
+
+.text-input {
+  margin-bottom: 20px;
+}
+
+.text-input label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.text-input textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.text-input textarea:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.error {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.8rem;
+  color: #e74c3c;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancel-btn, .submit-btn {
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.cancel-btn {
+  background: #ecf0f1;
+  border: none;
+}
+
+.cancel-btn:hover {
+  background: #bdc3c7;
+}
+
+.submit-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+}
+
+.submit-btn:hover {
+  background: #2980b9;
+}

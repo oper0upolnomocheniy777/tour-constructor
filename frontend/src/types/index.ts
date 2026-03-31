@@ -48,13 +48,14 @@ export interface Tour {
   destination: string;
   type: TourType;
   hot: boolean;
+  hotUntil?: string;
   price: number;
   enabled: boolean;
   avgRating: number;
   votesCount: number;
   discount: number;
   imageUrl?: string;
-  route?: TourRoute; 
+  route?: TourRoute;
 }
 
 export interface TourRoute {

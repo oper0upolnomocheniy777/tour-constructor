@@ -15,6 +15,7 @@ import { EditTourPage } from './pages/EditTourPage';
 import { TourDetailPage } from './pages/TourDetailPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { MyPurchasesPage } from './pages/MyPurchasesPage';
+import { AdminPanel } from './pages/AdminPanel';
 
 
 // Временно добавим мок-данные
@@ -126,6 +127,11 @@ function AppContent() {
           <Route path="/my-purchases" element={
             <PrivateRoute>
               <MyPurchasesPage />
+            </PrivateRoute>
+          } />
+          <Route path="/admin" element={
+            <PrivateRoute>
+              <AdminPanel />
             </PrivateRoute>
           } />
         </Routes>

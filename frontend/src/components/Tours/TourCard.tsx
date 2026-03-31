@@ -130,15 +130,15 @@ export const TourCard: React.FC<TourCardProps> = ({ tour }) => {
         </p>
 
         <div className="tour-rating">
-          <div className="stars">
-            {[1, 2, 3, 4, 5].map((star) => (
-              <span key={star} className={`star ${star <= Math.round(tour.avgRating) ? 'filled' : ''}`}>
-                ★
-              </span>
-            ))}
-          </div>
-          <span className="votes">({tour.votesCount} отзывов)</span>
-        </div>
+  <div className="stars">
+    {[1, 2, 3, 4, 5].map((star) => (
+      <span key={star} className={`star ${star <= Math.round(tour.avgRating) ? 'filled' : ''}`}>
+        ★
+      </span>
+    ))}
+  </div>
+  <span className="votes">({tour.votesCount} отзывов)</span>
+</div>
 
         <div className="tour-footer">
           <div className="tour-price">

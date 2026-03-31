@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TourCard } from '../components/Tours/TourCard';
 import { Tour, TourType } from '../types';
 import './ToursPage.css';
+import { HotToursBanner } from '../components/HotTours/HotToursBanner';
 
 // Мок-данные (потом заменим на API)
 const MOCK_TOURS: Tour[] = [
@@ -141,10 +142,12 @@ const ToursPage: React.FC = () => {
 
   return (
     <div className="tours-page">
-      <div className="tours-header">
-        <h1>Наши туры</h1>
-        <p>Выберите идеальное путешествие</p>
-      </div>
+  <div className="tours-header">
+    <h1>Наши туры</h1>
+    <p>Выберите идеальное путешествие</p>
+  </div>
+  
+  <HotToursBanner /> 
 
       {/* Панель фильтров */}
       <div className="filters-panel">

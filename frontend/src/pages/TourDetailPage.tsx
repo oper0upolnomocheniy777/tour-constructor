@@ -4,6 +4,10 @@ import { Tour, TourType } from '../types';
 import { getUserTour } from '../services/tourStorage';
 import { YandexMapComponent } from '../components/Map/YandexMap';
 import './TourDetailPage.css';
+import { ReviewForm } from '../components/Review/ReviewForm';
+import { ReviewItem } from '../components/Review/ReviewItem';
+import { getTourReviews, addReview, deleteReview, canUserReview } from '../services/reviewStorage';
+import { Review } from '../types/review';
 
 
 export const TourDetailPage: React.FC = () => {
@@ -12,16 +16,44 @@ export const TourDetailPage: React.FC = () => {
   const [tour, setTour] = useState<Tour | null>(null);
   const [loading, setLoading] = useState(true);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [userCanReview, setUserCanReview] = useState(false);
+  const checkCanReview = (tourId: number) => {
+  setUserCanReview(canUserReview(tourId));
+};
+
+ 
+const getCurrentUserName = () => {
+  const userStr = localStorage.getItem('user');
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      return `${user.firstName} ${user.lastName}` || user.username || 'Гость';
+    } catch {
+      return 'Гость';
+    }
+  }
+  return 'Гость';
+};
+
+const currentUser = getCurrentUserName();
 
   useEffect(() => {
-    if (id) {
-      const foundTour = getUserTour(parseInt(id));
-      if (foundTour) {
-        setTour(foundTour);
-      }
+  if (id) {
+    const tourId = parseInt(id);
+    const foundTour = getUserTour(tourId);
+    if (foundTour) {
+      setTour(foundTour);
     }
-    setLoading(false);
-  }, [id]);
+    // Загружаем отзывы
+    const tourReviews = getTourReviews(tourId);
+    setReviews(tourReviews);
+    // Проверяем, может ли пользователь оставить отзыв
+    checkCanReview(tourId);
+  }
+  setLoading(false);
+}, [id]);
 
   const getTypeLabel = (type: TourType): string => {
     switch (type) {
@@ -40,6 +72,46 @@ export const TourDetailPage: React.FC = () => {
       default: return '';
     }
   };
+
+  const handleAddReview = (rating: number, text: string) => {
+  if (tour) {
+    try {
+      const newReview = addReview(
+        { tourId: tour.id, rating, text },
+        currentUser
+      );
+      setReviews([newReview, ...reviews]);
+      setShowReviewForm(false);
+      // После добавления отзыва - больше нельзя оставить еще один
+      setUserCanReview(false);
+      
+      // Обновляем рейтинг тура
+      const updatedTour = getUserTour(tour.id);
+      if (updatedTour) {
+        setTour(updatedTour);
+      }
+    } catch (error) {
+      alert('Вы уже оставляли отзыв на этот тур');
+      setShowReviewForm(false);
+    }
+  }
+};
+
+// Обновите handleDeleteReview:
+const handleDeleteReview = (reviewId: number) => {
+  if (tour && window.confirm('Удалить этот отзыв?')) {
+    deleteReview(reviewId, tour.id);
+    setReviews(reviews.filter(r => r.id !== reviewId));
+    
+    const updatedTour = getUserTour(tour.id);
+    if (updatedTour) {
+      setTour(updatedTour);
+    }
+    
+    // После удаления отзыва снова можно оставить отзыв (если тур куплен)
+    checkCanReview(tour.id);
+  }
+};
 
   // Преобразуем точки маршрута в формат для карты
   const mapMarkers = tour?.route?.points.map(point => ({
@@ -163,6 +235,40 @@ export const TourDetailPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Отзывы */}
+    <div className="reviews-section">
+    <h2>Отзывы ({reviews.length})</h2>
+    
+    {userCanReview && !showReviewForm && (
+        <button className="write-review-btn" onClick={() => setShowReviewForm(true)}>
+        ✍️ Написать отзыв
+        </button>
+    )}
+    
+    {showReviewForm && (
+        <ReviewForm
+        tourId={tour.id}
+        onSubmit={handleAddReview}
+        onCancel={() => setShowReviewForm(false)}
+        />
+    )}
+    
+    {reviews.length === 0 ? (
+        <p className="no-reviews">Пока нет отзывов. Будьте первым!</p>
+    ) : (
+        <div className="reviews-list">
+        {reviews.map(review => (
+            <ReviewItem
+            key={review.id}
+            review={review}
+            canDelete={review.userName === currentUser}
+            onDelete={() => handleDeleteReview(review.id)}
+            />
+        ))}
+        </div>
+    )}
+    </div>
 
       {/* Цена и покупка */}
       <div className="tour-purchase-section">
