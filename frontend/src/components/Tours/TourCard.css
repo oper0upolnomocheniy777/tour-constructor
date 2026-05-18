@@ -1,95 +1,74 @@
 .tour-card {
   background: white;
-  border-radius: 8px;
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
   position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
+  animation: fadeInUp 0.4s ease-out;
 }
 
 .tour-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .hot-badge {
   position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #e74c3c;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
   color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
   font-weight: bold;
   z-index: 2;
 }
 
 .discount-badge {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: #27ae60;
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
   color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
   font-weight: bold;
   z-index: 2;
 }
 
 .tour-image {
   height: 200px;
-  background-color: #f0f0f0;
+  background: linear-gradient(135deg, #47BDCF 0%, #7B86FC 100%);
   overflow: hidden;
   position: relative;
 }
-
 
 .tour-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  position: absolute;
-  top: 0;
-  left: 0;
+  transition: transform 0.5s;
 }
 
-.image-current {
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-  z-index: 1;
-}
-
-.image-current.fade-out {
-  opacity: 0;
-}
-
-.image-next {
-  opacity: 1;
-  z-index: 2;
-}
-
-.image-wrapper {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  opacity: 1;
-  transition: opacity 0.3s ease-in-out;
-}
-
-.image-wrapper.fade-out {
-  opacity: 0;
-}
-
-.image-wrapper img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+.tour-card:hover .tour-image img {
+  transform: scale(1.1);
 }
 
 .no-image {
@@ -98,42 +77,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #999;
-  font-size: 0.9rem;
-  background-color: #f0f0f0;
-}
-
-/* Индикаторы слайдов */
-.slide-indicators {
-  position: absolute;
-  bottom: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 6px;
-  z-index: 10;
-}
-
-.indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.5);
-  transition: all 0.3s;
-  cursor: pointer;
-}
-
-.indicator:hover {
-  background: rgba(255, 255, 255, 0.8);
-}
-
-.indicator.active {
-  background: white;
-  transform: scale(1.2);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1rem;
+  background: linear-gradient(135deg, #47BDCF 0%, #7B86FC 100%);
 }
 
 .tour-content {
-  padding: 16px;
+  padding: 20px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -141,29 +91,33 @@
 
 .tour-title {
   margin: 0 0 8px 0;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
 }
 
 .tour-title a {
-  color: #2c3e50;
+  color: #2d3748;
   text-decoration: none;
+  transition: color 0.3s;
 }
 
 .tour-title a:hover {
-  color: #3498db;
+  color: #667eea;
 }
 
 .tour-destination {
-  color: #7f8c8d;
-  font-size: 0.9rem;
-  margin-bottom: 8px;
+  color: #718096;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .tour-description {
-  color: #666;
+  color: #4a5568;
   font-size: 0.9rem;
   line-height: 1.5;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
   flex: 1;
 }
 
@@ -171,7 +125,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .stars {
@@ -180,17 +134,17 @@
 }
 
 .star {
-  color: #ddd;
-  font-size: 1.1rem;
+  color: #e2e8f0;
+  font-size: 1rem;
 }
 
 .star.filled {
-  color: #f1c40f;
+  color: #f6ad55;
 }
 
 .votes {
-  color: #95a5a6;
-  font-size: 0.85rem;
+  color: #a0aec0;
+  font-size: 0.8rem;
 }
 
 .tour-footer {
@@ -201,36 +155,34 @@
 }
 
 .tour-price {
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   font-weight: bold;
-  color: #2c3e50;
+  color: #2d3748;
 }
 
 .old-price {
-  font-size: 0.9rem;
-  color: #95a5a6;
+  font-size: 0.85rem;
+  color: #a0aec0;
   text-decoration: line-through;
   margin-right: 8px;
 }
 
 .new-price {
-  color: #27ae60;
-}
-
-.price {
-  color: #2c3e50;
+  color: #e53e3e;
 }
 
 .view-btn {
-  background-color: #3498db;
+  background: linear-gradient(135deg, #47BDCF 0%, #7B86FC 100%);
   color: white;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 8px 16px;
+  border-radius: 25px;
   text-decoration: none;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s;
 }
 
 .view-btn:hover {
-  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }

@@ -141,6 +141,7 @@ const ToursPage: React.FC = () => {
   }
 
   return (
+    <div className="page-container">
     <div className="tours-page">
   <div className="tours-header">
     <h1>Наши туры</h1>
@@ -259,6 +260,7 @@ const ToursPage: React.FC = () => {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 };

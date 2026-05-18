@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { User, LoginCredentials, RegisterData, Role } from '../types';
 import { authApi } from '../services/api';
-
+import { toast } from 'sonner';
 interface AuthContextType {
   user: User | null;
   loading: boolean;
@@ -64,6 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(user);
     } catch (error) {
       console.error('Login failed:', error);
+      toast.error('Неверное имя пользователя или пароль');
       throw error;
     }
   };
@@ -88,6 +89,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(user);
     } catch (error) {
       console.error('Registration failed:', error);
+      toast.error('Ошибка при регистрации. Возможно, имя пользователя уже занято.');
       throw error;
     }
   };

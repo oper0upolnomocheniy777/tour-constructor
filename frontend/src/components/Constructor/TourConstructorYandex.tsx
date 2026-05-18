@@ -6,7 +6,7 @@ import { SaveTourModal } from './SaveTourModal';
 import { TourRoute, TourType } from '../../types';
 import { saveUserTour, updateUserTour, SaveTourData, getUserTour } from '../../services/tourStorage';
 import './TourConstructor.css';
-
+import { toast } from 'sonner';
 interface TourConstructorYandexProps {
   initialRoute?: TourRoute;
   tourId?: number;
@@ -180,9 +180,9 @@ const handleSaveTour = (tourData: {
     });
     
     if (updated) {
-      alert(`Тур "${updated.title}" успешно обновлен!`);
+      toast.success(`Тур "${updated.title}" успешно обновлен!`);
     } else {
-      alert('Ошибка при обновлении тура');
+      toast.error('Ошибка при обновлении тура');
     }
   } else {
     // Создаем новый тур
@@ -196,7 +196,7 @@ const handleSaveTour = (tourData: {
     };
 
     const newTour = saveUserTour(saveData);
-    alert(`Тур "${newTour.title}" успешно сохранен!`);
+    toast.success(`Тур "${newTour.title}" успешно сохранен!`);
   }
   
   setIsModalOpen(false); // Это должно закрыть модальное окно

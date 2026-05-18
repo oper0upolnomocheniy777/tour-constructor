@@ -4,23 +4,112 @@
   gap: 20px;
 }
 
-.btn-save-tour {
-  background-color: #27ae60;
+.constructor-header h2 {
   color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+}
+
+.points-header h3 {
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0;
+}
+
+.points-hint {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  margin: 8px 0 0 0;
+}
+
+/* Блок с расстоянием и временем */
+.route-info {
+  display: flex;
+  gap: 20px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 100%);
+  backdrop-filter: blur(12px);
+  padding: 10px 24px;
+  border-radius: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.route-info span {
+  color: rgb(0, 0, 0);
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+}
+
+.route-info span:first-child {
+  padding-right: 20px;
+  border-right: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.btn-save-tour {
+  background: white;
+  color: rgb(0, 0, 0);
   border: none;
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 50px;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 500;
-  transition: background-color 0.2s;
+  transition: all 0.3s;
+  margin-top: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .btn-save-tour:hover:not(:disabled) {
-  background-color: #219a52;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(71, 189, 207, 0.4);
 }
 
 .btn-save-tour:disabled {
-  background-color: #bdc3c7;
+  background: rgba(255, 255, 255, 0.3);
   cursor: not-allowed;
+  transform: none;
+}
+
+/* Адаптивность для конструктора */
+@media (max-width: 768px) {
+  .constructor-layout {
+    grid-template-columns: 1fr;
+  }
+  
+  .constructor-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .header-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .route-info {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .map-section {
+    padding: 5px;
+  }
+  
+  .points-section {
+    padding: 15px;
+  }
+  
+  .route-point {
+    flex-wrap: wrap;
+  }
+  
+  .point-actions {
+    margin-left: auto;
+  }
 }

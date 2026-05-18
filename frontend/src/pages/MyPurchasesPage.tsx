@@ -47,6 +47,7 @@ export const MyPurchasesPage: React.FC = () => {
   }
 
   return (
+    <div className="page-container">
     <div className="my-purchases-page">
       <h1>Мои покупки</h1>
 
@@ -92,6 +93,7 @@ export const MyPurchasesPage: React.FC = () => {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 };

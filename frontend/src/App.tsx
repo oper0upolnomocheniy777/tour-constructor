@@ -16,8 +16,12 @@ import { TourDetailPage } from './pages/TourDetailPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { MyPurchasesPage } from './pages/MyPurchasesPage';
 import { AdminPanel } from './pages/AdminPanel';
+import { Toaster } from 'sonner';
+import { initTours } from './services/initTours';
+import ChatbotWidget from './components/Chatbot/ChatbotWidget';
 
-
+ initTours();
+ 
 // Временно добавим мок-данные
 const MOCK_TOURS: Tour[] = [
   {
@@ -86,7 +90,8 @@ function AppContent() {
 
   return (
     <>
-      <Navbar />
+      <Navbar /> 
+      <Toaster position="top-right" richColors />
       <div className="container">
         <Routes>
           <Route path="/login" element={<LoginForm />} />
@@ -135,6 +140,7 @@ function AppContent() {
             </PrivateRoute>
           } />
         </Routes>
+        <ChatbotWidget />
       </div>
     </>
   );

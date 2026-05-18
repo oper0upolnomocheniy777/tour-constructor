@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Tour } from '../types';
 import { getUserTour } from '../services/tourStorage';
 import './CheckoutPage.css';
+import { toast } from 'sonner';
 
 export const CheckoutPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,7 +49,7 @@ export const CheckoutPage: React.FC = () => {
       localStorage.setItem('purchases', JSON.stringify(purchases));
       
       setIsProcessing(false);
-      alert(`Заказ оформлен! Сумма: ${totalPrice} ₽`);
+      toast.success(`Заказ оформлен! Сумма: ${totalPrice} ₽`);
       navigate('/my-purchases');
     }, 1000);
   };
@@ -67,6 +68,7 @@ export const CheckoutPage: React.FC = () => {
   }
 
   return (
+    <div className="page-container">
     <div className="checkout-page">
       <button onClick={() => navigate(-1)} className="back-btn">
         ← Назад
@@ -142,6 +144,7 @@ export const CheckoutPage: React.FC = () => {
           </button>
         </div>
       </div>
+    </div>
     </div>
   );
 };

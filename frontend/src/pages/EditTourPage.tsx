@@ -39,6 +39,7 @@ export const EditTourPage: React.FC = () => {
   const YANDEX_MAPS_API_KEY = process.env.REACT_APP_YANDEX_MAPS_API_KEY || '';
 
   return (
+    <div className="page-container">
     <div className="edit-tour-page">
       <div className="edit-header">
         <button onClick={() => navigate('/my-tours')} className="back-btn">
@@ -51,6 +52,7 @@ export const EditTourPage: React.FC = () => {
         initialRoute={tour.route}
         tourId={tour.id}
       />
+    </div>
     </div>
   );
 };

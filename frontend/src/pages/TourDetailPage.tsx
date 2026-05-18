@@ -8,6 +8,9 @@ import { ReviewForm } from '../components/Review/ReviewForm';
 import { ReviewItem } from '../components/Review/ReviewItem';
 import { getTourReviews, addReview, deleteReview, canUserReview } from '../services/reviewStorage';
 import { Review } from '../types/review';
+import { exportToGPX, exportToJSON } from '../utils/exportRoute';
+import { toast } from 'sonner';
+
 
 
 export const TourDetailPage: React.FC = () => {
@@ -90,8 +93,9 @@ const currentUser = getCurrentUserName();
       if (updatedTour) {
         setTour(updatedTour);
       }
+      toast.success('Спасибо за отзыв!');
     } catch (error) {
-      alert('Вы уже оставляли отзыв на этот тур');
+      toast.error('Вы уже оставляли отзыв на этот тур');
       setShowReviewForm(false);
     }
   }
@@ -102,6 +106,7 @@ const handleDeleteReview = (reviewId: number) => {
   if (tour && window.confirm('Удалить этот отзыв?')) {
     deleteReview(reviewId, tour.id);
     setReviews(reviews.filter(r => r.id !== reviewId));
+    toast.success('Отзыв удален');
     
     const updatedTour = getUserTour(tour.id);
     if (updatedTour) {
@@ -110,7 +115,9 @@ const handleDeleteReview = (reviewId: number) => {
     
     // После удаления отзыва снова можно оставить отзыв (если тур куплен)
     checkCanReview(tour.id);
+    
   }
+  
 };
 
   // Преобразуем точки маршрута в формат для карты
@@ -141,7 +148,26 @@ const handleDeleteReview = (reviewId: number) => {
     );
   }
 
+ const handleExportGPX = () => {
+  if (tour?.route?.points && tour.route.points.length > 0) {
+    exportToGPX(tour.route.points, tour.title);
+    toast.success('Маршрут экспортирован в GPX');
+  } else {
+    toast.error('Нет точек для экспорта');
+  }
+};
+
+const handleExportJSON = () => {
+  if (tour?.route?.points && tour.route.points.length > 0) {
+    exportToJSON(tour.route.points, tour.title);
+    toast.success('Маршрут экспортирован в JSON');
+  } else {
+    toast.error('Нет точек для экспорта');
+  }
+};
+
   return (
+    <div className="page-container">
     <div className="tour-detail-page">
       <button onClick={() => navigate(-1)} className="back-btn">
         ← Назад
@@ -199,6 +225,17 @@ const handleDeleteReview = (reviewId: number) => {
           )}
         </div>
       )}
+
+      {tour?.route?.points && tour.route.points.length > 0 && (
+  <div className="export-buttons">
+    <button onClick={handleExportGPX} className="btn-export">
+      📁 Скачать GPX
+    </button>
+    <button onClick={handleExportJSON} className="btn-export">
+      📄 Скачать JSON
+    </button>
+  </div>
+)}
 
       {/* Описание */}
       <div className="tour-description-section">
@@ -291,6 +328,7 @@ const handleDeleteReview = (reviewId: number) => {
             </Link>
         </div>
       </div>
+    </div>
     </div>
   );
 };

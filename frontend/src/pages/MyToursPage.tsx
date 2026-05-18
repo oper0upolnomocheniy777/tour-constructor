@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Tour, TourType } from '../types';
 import { getUserTours, deleteUserTour } from '../services/tourStorage';
 import './MyToursPage.css';
+import { toast } from 'sonner';
 
 export const MyToursPage: React.FC = () => {
   const [tours, setTours] = useState<Tour[]>([]);
@@ -24,7 +25,9 @@ export const MyToursPage: React.FC = () => {
     deleteUserTour(id);
     loadTours();
     setDeleteConfirm(null);
+    toast.success('Тур удален');
   };
+
 
   const getTypeLabel = (type: TourType): string => {
     switch (type) {
@@ -40,6 +43,7 @@ export const MyToursPage: React.FC = () => {
   }
 
   return (
+    <div className="page-container">
     <div className="my-tours-page">
       <div className="page-header">
         <h1>Мои туры</h1>
@@ -122,6 +126,7 @@ export const MyToursPage: React.FC = () => {
           ))}
         </div>
       )}
+    </div>
     </div>
   );
 };

@@ -83,6 +83,7 @@ export const AdminPanel: React.FC = () => {
   }
 
   return (
+    <div className="page-container">
     <div className="admin-panel">
       <h1>Админ-панель</h1>
       
@@ -240,6 +241,7 @@ export const AdminPanel: React.FC = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
