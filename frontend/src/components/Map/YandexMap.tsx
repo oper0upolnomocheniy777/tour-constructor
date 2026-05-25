@@ -42,6 +42,7 @@ export const YandexMapComponent: React.FC<YandexMapProps> = ({
   const markersRef = useRef<any[]>([]);
   const routeRef = useRef<any>(null);
 
+  
   // Загрузка API Яндекс Карт
   useEffect(() => {
     if (!apiKey) return;

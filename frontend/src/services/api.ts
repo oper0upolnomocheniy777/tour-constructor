@@ -2,10 +2,8 @@ import axios from 'axios';
 import { AuthResponse, LoginCredentials, RegisterData, User } from '../types';
 import { mockAuthApi } from './mockApi';
 
-// Переключатель: true = использовать мок, false = реальный API
-const USE_MOCK_API = true; // Временно включаем мок для тестирования
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
+const USE_MOCK_API = false;
+const API_BASE_URL = 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -67,12 +65,21 @@ export const authApi = {
   }
 };
 
+export const purchasesApi = {
+  create: (data: any) => api.post('/purchases', data),
+  getMy: () => api.get('/purchases/my'),      // для пользователя
+  getAll: () => api.get('/purchases/all'),    // для админа
+  updateStatus: (id: number, status: string) => api.patch(`/purchases/${id}`, { status }),
+};
+
 export const toursApi = {
   getAll: () => api.get('/tours'),
+  getPublic: () => api.get('/tours/public'),
+  getUserTours: () => api.get('/tours/user/me'),
   getById: (id: number) => api.get(`/tours/${id}`),
   create: (data: any) => api.post('/tours', data),
   update: (id: number, data: any) => api.put(`/tours/${id}`, data),
-  delete: (id: number) => api.delete(`/tours/${id}`)
+  delete: (id: number) => api.delete(`/tours/${id}`),
 };
 
 export default api;

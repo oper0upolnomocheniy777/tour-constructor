@@ -5,7 +5,8 @@ export interface Review {
   userName: string;
   rating: number;
   text: string;
-  date: string;
+  date?: string;      // опционально
+  createdAt?: string; // добавить
 }
 
 export interface CreateReviewData {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Tour } from '../types';
-import { getUserTour } from '../services/tourStorage';
 import './CheckoutPage.css';
 import { toast } from 'sonner';
+import { toursApi, purchasesApi } from '../services/api';
 
 export const CheckoutPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,14 +14,22 @@ export const CheckoutPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
-    if (id) {
-      const foundTour = getUserTour(parseInt(id));
-      if (foundTour) {
-        setTour(foundTour);
-      }
+  const fetchTour = async () => {
+    if (!id) return;
+    setLoading(true);
+    try {
+      const response = await toursApi.getById(parseInt(id));
+      setTour(response.data);
+    } catch (error) {
+      console.error('Ошибка загрузки тура:', error);
+      toast.error('Тур не найден');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, [id]);
+  };
+  
+  fetchTour();
+}, [id]);
 
   const discountedPrice = tour?.discount
     ? tour.price * (1 - tour.discount / 100)
@@ -29,30 +37,24 @@ export const CheckoutPage: React.FC = () => {
 
   const totalPrice = discountedPrice ? discountedPrice * units : 0;
 
-  const handlePurchase = () => {
-    setIsProcessing(true);
+  const handlePurchase = async () => {
+  setIsProcessing(true);
+  
+  try {
+    await purchasesApi.create({
+      tourId: tour?.id,
+      units: units
+    });
     
-    // Имитация отправки заказа
-    setTimeout(() => {
-      // Сохраняем покупку в localStorage
-      const purchases = JSON.parse(localStorage.getItem('purchases') || '[]');
-      const newPurchase = {
-        id: Date.now(),
-        tourId: tour?.id,
-        tourTitle: tour?.title,
-        units: units,
-        price: totalPrice,
-        date: new Date().toISOString(),
-        status: 'pending'
-      };
-      purchases.push(newPurchase);
-      localStorage.setItem('purchases', JSON.stringify(purchases));
-      
-      setIsProcessing(false);
-      toast.success(`Заказ оформлен! Сумма: ${totalPrice} ₽`);
-      navigate('/my-purchases');
-    }, 1000);
-  };
+    toast.success(`Заказ оформлен! Сумма: ${totalPrice} ₽`);
+    navigate('/my-purchases');
+  } catch (error) {
+    console.error('Ошибка при покупке:', error);
+    toast.error('Ошибка при оформлении заказа');
+  } finally {
+    setIsProcessing(false);
+  }
+};
 
   if (loading) {
     return <div className="loading">Загрузка...</div>;

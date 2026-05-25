@@ -5,6 +5,7 @@ export interface User {
   username: string;
   email?: string;
   roles: Role[];
+  role?: string;        
   discount: number;
   telephone?: string;
 }
@@ -56,6 +57,7 @@ export interface Tour {
   discount: number;
   imageUrl?: string;
   route?: TourRoute;
+  userId?: number;        // ← добавить эту строку
 }
 
 export interface TourRoute {

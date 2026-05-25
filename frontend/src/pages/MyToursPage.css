@@ -12,10 +12,9 @@
   padding-bottom: 15px;
 }
 
-.page-header h1 {
-  font-size: 2rem;
-  color: #2c3e50;
-  margin: 0;
+.my-tours-page .page-header h1,
+.my-tours-page .page-header {
+  color: white !important;
 }
 
 .create-btn {

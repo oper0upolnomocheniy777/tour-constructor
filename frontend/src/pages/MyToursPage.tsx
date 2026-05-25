@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Tour, TourType } from '../types';
-import { getUserTours, deleteUserTour } from '../services/tourStorage';
-import './MyToursPage.css';
+import { Tour } from '../types';
+import { toursApi } from '../services/api';
 import { toast } from 'sonner';
+import './MyToursPage.css';
 
 export const MyToursPage: React.FC = () => {
   const [tours, setTours] = useState<Tour[]>([]);
@@ -14,26 +14,37 @@ export const MyToursPage: React.FC = () => {
     loadTours();
   }, []);
 
-  const loadTours = () => {
+  const loadTours = async () => {
     setLoading(true);
-    const userTours = getUserTours();
-    setTours(userTours);
-    setLoading(false);
+    try {
+      const response = await toursApi.getUserTours();
+      console.log('My tours response:', response.data);
+      setTours(Array.isArray(response.data) ? response.data : []);
+    } catch (error) {
+      console.error('Ошибка загрузки моих туров:', error);
+      setTours([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDelete = (id: number) => {
-    deleteUserTour(id);
-    loadTours();
-    setDeleteConfirm(null);
-    toast.success('Тур удален');
+  const handleDelete = async (id: number) => {
+    try {
+      await toursApi.delete(id);
+      toast.success('Тур удален');
+      loadTours();
+      setDeleteConfirm(null);
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast.error('Ошибка при удалении тура');
+    }
   };
 
-
-  const getTypeLabel = (type: TourType): string => {
+  const getTypeLabel = (type: string): string => {
     switch (type) {
-      case TourType.RECREATION: return 'Отдых';
-      case TourType.EXCURSION: return 'Экскурсии';
-      case TourType.SHOPPING: return 'Шоппинг';
+      case 'RECREATION': return 'Отдых';
+      case 'EXCURSION': return 'Экскурсии';
+      case 'SHOPPING': return 'Шоппинг';
       default: return 'Неизвестно';
     }
   };
@@ -44,89 +55,82 @@ export const MyToursPage: React.FC = () => {
 
   return (
     <div className="page-container">
-    <div className="my-tours-page">
-      <div className="page-header">
-        <h1>Мои туры</h1>
-        <Link to="/constructor" className="create-btn">
-          + Создать новый тур
-        </Link>
-      </div>
-
-      {tours.length === 0 ? (
-        <div className="empty-state">
-          <p>У вас пока нет сохраненных туров</p>
-          <Link to="/constructor" className="create-first-btn">
-            Создать первый тур
+      <div className="my-tours-page">
+        <div className="page-header">
+          <h1>Мои туры</h1>
+          <Link to="/constructor" className="create-btn">
+            + Создать новый тур
           </Link>
         </div>
-      ) : (
-        <div className="tours-list">
-          {tours.map(tour => (
-            <div key={tour.id} className="tour-item">
-              <div className="tour-info">
-                <h3 className="tour-title">
-                  <Link to={`/tour/${tour.id}`}>{tour.title}</Link>
-                </h3>
-                <div className="tour-meta">
-                  <span className="tour-destination">📍 {tour.destination}</span>
-                  <span className={`tour-type ${tour.type.toLowerCase()}`}>
-                    {getTypeLabel(tour.type)}
-                  </span>
-                  {tour.route && tour.route.points.length > 0 && (
-                    <span className="tour-points">
-                      🗺️ {tour.route.points.length} точек
-                    </span>
-                  )}
-                  {tour.route?.totalDistance && (
-                    <span className="tour-distance">
-                      📏 {tour.route.totalDistance} км
-                    </span>
-                  )}
-                </div>
-                <p className="tour-description">
-                  {tour.description.length > 150
-                    ? tour.description.substring(0, 150) + '...'
-                    : tour.description}
-                </p>
-                <div className="tour-price">
-                  {tour.discount > 0 ? (
-                    <>
-                      <span className="old-price">{tour.price} ₽</span>
-                      <span className="new-price">
-                        {Math.round(tour.price * (1 - tour.discount / 100))} ₽
-                      </span>
-                    </>
-                  ) : (
-                    <span className="price">{tour.price} ₽</span>
-                  )}
-                </div>
-              </div>
 
-              <div className="tour-actions">
-                <Link to={`/edit-tour/${tour.id}`} className="btn-edit">
-                  ✏️ Редактировать
-                </Link>
-                {deleteConfirm === tour.id ? (
-                  <div className="delete-confirm">
-                    <span>Удалить?</span>
-                    <button onClick={() => handleDelete(tour.id)} className="btn-confirm">
-                      Да
-                    </button>
-                    <button onClick={() => setDeleteConfirm(null)} className="btn-cancel">
-                      Нет
-                    </button>
+        {!tours || tours.length === 0 ? (
+          <div className="empty-state">
+            <p>У вас пока нет сохраненных туров</p>
+            <Link to="/constructor" className="create-first-btn">
+              Создать первый тур
+            </Link>
+          </div>
+        ) : (
+          <div className="tours-list">
+            {tours.map(tour => (
+              <div key={tour.id} className="tour-item">
+                <div className="tour-info">
+                  <h3 className="tour-title">
+                    <Link to={`/tour/${tour.id}`}>{tour.title}</Link>
+                  </h3>
+                  <div className="tour-meta">
+                    <span className="tour-destination">📍 {tour.destination}</span>
+                    <span className={`tour-type ${tour.type?.toLowerCase() || ''}`}>
+                      {getTypeLabel(tour.type)}
+                    </span>
+                    {tour.route?.points && (
+                      <span className="tour-points">🗺️ {tour.route.points.length} точек</span>
+                    )}
                   </div>
-                ) : (
-                  <button onClick={() => setDeleteConfirm(tour.id)} className="btn-delete">
-                    🗑️ Удалить
-                  </button>
-                )}
+                  <p className="tour-description">
+                    {tour.description?.length > 150
+                      ? tour.description.substring(0, 150) + '...'
+                      : tour.description}
+                  </p>
+                  <div className="tour-price">
+                    {tour.discount > 0 ? (
+                      <>
+                        <span className="old-price">{tour.price} ₽</span>
+                        <span className="new-price">
+                          {Math.round(tour.price * (1 - tour.discount / 100))} ₽
+                        </span>
+                      </>
+                    ) : (
+                      <span className="price">{tour.price} ₽</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="tour-actions">
+                  <Link to={`/edit-tour/${tour.id}`} className="btn-edit">
+                    ✏️ Редактировать
+                  </Link>
+                  {deleteConfirm === tour.id ? (
+                    <div className="delete-confirm">
+                      <span>Удалить?</span>
+                      <button onClick={() => handleDelete(tour.id)} className="btn-confirm">
+                        Да
+                      </button>
+                      <button onClick={() => setDeleteConfirm(null)} className="btn-cancel">
+                        Нет
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => setDeleteConfirm(tour.id)} className="btn-delete">
+                      🗑️ Удалить
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

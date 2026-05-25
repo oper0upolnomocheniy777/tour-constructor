@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { TourConstructorYandex } from '../components/Constructor/TourConstructorYandex';
 import { getUserTour } from '../services/tourStorage';
 import { Tour } from '../types';
+import { toursApi } from '../services/api';
 
 export const EditTourPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,16 +13,20 @@ export const EditTourPage: React.FC = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
+  const fetchTour = async () => {
     if (id) {
-      const foundTour = getUserTour(parseInt(id));
-      if (foundTour) {
-        setTour(foundTour);
-      } else {
+      try {
+        const response = await toursApi.getById(parseInt(id));
+        setTour(response.data);
+      } catch (error) {
+        console.error('Ошибка загрузки тура:', error);
         setError(true);
       }
     }
     setLoading(false);
-  }, [id]);
+  };
+  fetchTour();
+}, [id]);
 
   if (loading) {
     return <div className="loading">Загрузка...</div>;

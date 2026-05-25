@@ -28,28 +28,108 @@
   }
 }
 
+.tour-detail-page,
+.tour-detail-page .tour-header,
+.tour-detail-page .tour-meta,
+.tour-detail-page .tour-destination,
+.tour-detail-page .route-info,
+.tour-detail-page .points-list-section h2,
+.tour-detail-page .reviews-section h2,
+.tour-detail-page .votes
 .tours-header h1,
 .tours-header p,
 .page-header h1,
 .my-tours-page > h1,
 .my-purchases-page > h1,
 .checkout-page > h1,
+.admin-panel > h1,
+.edit-header h1,
 .tour-detail-page h1,
 .tour-detail-page h2,
-.edit-header h1,
-.admin-panel h1 {
-   color: white !important;
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+.tour-detail-page .tour-description-section,
+.tour-detail-page .description-content,
+.my-tours-page .page-header h1,
+.my-purchases-page .page-header h1,
+.checkout-page .checkout-container h1,
+.checkout-page .tour-info-card h2,
+.checkout-page .tour-info-card p {
+  color: white !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.tours-header p {
-  color: rgba(255, 255, 255, 0.9) !important;
+.tour-detail-page .tour-info-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 30px;
 }
 
-.tour-info-card h2,
-.tour-info-card .tour-meta {
-  color: #2d3748;
-  text-shadow: none;
+.tour-detail-page .tour-info-card h2,
+.tour-detail-page .tour-info-card .tour-meta,
+.tour-detail-page .tour-info-card .tour-description {
+  color: #2d3748 !important;
+}
+
+/* Блок с расстоянием и временем */
+.tour-detail-page .route-info {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  padding: 10px 20px;
+  border-radius: 30px;
+  display: inline-flex;
+  gap: 20px;
+  margin: 15px 0;
+}
+
+.tour-detail-page .route-info span {
+  color: white !important;
+}
+
+/* Точки маршрута */
+.tour-detail-page .points-list-section .point-item {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  margin-bottom: 10px;
+  padding: 12px;
+}
+
+.tour-detail-page .points-list-section .point-name {
+  color: #2d3748 !important;
+}
+
+.tour-detail-page .points-list-section .point-description {
+  color: #666 !important;
+}
+
+/* Отзывы */
+.tour-detail-page .reviews-section .review-item {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  padding: 16px;
+}
+
+.tour-detail-page .reviews-section .reviewer-name {
+  color: #2d3748 !important;
+  font-weight: bold;
+}
+
+.tour-detail-page .reviews-section .review-text {
+  color: #4a5568 !important;
+}
+
+/* Кнопки */
+.tour-detail-page .back-btn,
+.tour-detail-page .btn-edit,
+.tour-detail-page .btn-buy,
+.tour-detail-page .btn-export {
+  color: white !important;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 10px;
 }
 
 /* Кнопки */

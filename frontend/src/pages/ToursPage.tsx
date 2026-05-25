@@ -3,80 +3,7 @@ import { TourCard } from '../components/Tours/TourCard';
 import { Tour, TourType } from '../types';
 import './ToursPage.css';
 import { HotToursBanner } from '../components/HotTours/HotToursBanner';
-
-// Мок-данные (потом заменим на API)
-const MOCK_TOURS: Tour[] = [
-  {
-    id: 1,
-    title: 'Путешествие в Париж',
-    description: 'Посетите город любви и романтики. Эйфелева башня, Лувр, Монмартр и многое другое.',
-    destination: 'Франция, Париж',
-    type: TourType.EXCURSION,
-    hot: true,
-    price: 45000,
-    enabled: true,
-    avgRating: 4.5,
-    votesCount: 128,
-    discount: 10,
-    imageUrl: '/images/tours/paris.jpg'  // локальный путь
-  },
-  {
-    id: 2,
-    title: 'Отдых в Сочи',
-    description: 'Черное море, горы, парки и развлечения для всей семьи.',
-    destination: 'Россия, Сочи',
-    type: TourType.RECREATION,
-    hot: false,
-    price: 35000,
-    enabled: true,
-    avgRating: 4.2,
-    votesCount: 89,
-    discount: 0,
-    imageUrl: '/images/tours/sochi.jpg'
-  },
-  {
-    id: 3,
-    title: 'Шоппинг в Милане',
-    description: 'Лучшие бренды, аутлеты и итальянская кухня.',
-    destination: 'Италия, Милан',
-    type: TourType.SHOPPING,
-    hot: false,
-    price: 55000,
-    enabled: true,
-    avgRating: 4.7,
-    votesCount: 56,
-    discount: 5,
-    imageUrl: '/images/tours/milan.jpg'
-  },
-  {
-    id: 4,
-    title: 'Тур по Золотому кольцу',
-    description: 'Древние русские города, история и архитектура.',
-    destination: 'Россия',
-    type: TourType.EXCURSION,
-    hot: false,
-    price: 25000,
-    enabled: true,
-    avgRating: 4.3,
-    votesCount: 42,
-    discount: 0,
-    imageUrl: '/images/tours/golden-ring.jpg'
-  },
-  {
-    id: 5,
-    title: 'Отдых на Бали',
-    description: 'Райские пляжи, океан и экзотика.',
-    destination: 'Индонезия, Бали',
-    type: TourType.RECREATION,
-    hot: true,
-    price: 85000,
-    enabled: true,
-    avgRating: 4.8,
-    votesCount: 215,
-    discount: 15,
-    imageUrl: '/images/tours/bali.jpg'
-  }
-];
+import { toursApi } from '../services/api';
 
 const ToursPage: React.FC = () => {
   const [tours, setTours] = useState<Tour[]>([]);
@@ -91,13 +18,20 @@ const ToursPage: React.FC = () => {
   const [showHotOnly, setShowHotOnly] = useState(false);
 
   useEffect(() => {
-    // Загружаем туры
-    setTimeout(() => {
-      setTours(MOCK_TOURS);
-      setFilteredTours(MOCK_TOURS);
+  const fetchTours = async () => {
+    setLoading(true);
+    try {
+      const response = await toursApi.getPublic();
+      setTours(response.data);
+      setFilteredTours(response.data);
+    } catch (error) {
+      console.error('Ошибка загрузки туров:', error);
+    } finally {
       setLoading(false);
-    }, 500);
-  }, []);
+    }
+  };
+  fetchTours();
+}, []);
 
   // Применяем фильтры
   useEffect(() => {

@@ -107,7 +107,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const isAuthenticated = !!user;
-  const isAgent = user?.roles.some(role => role === Role.TOUR_AGENT) ?? false;
+  const isAgent = user?.role === 'agent' || user?.roles?.includes(Role.TOUR_AGENT) || false;
+
+  
 
   return (
     <AuthContext.Provider value={{

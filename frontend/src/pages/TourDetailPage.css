@@ -20,6 +20,30 @@
   background: #ecf0f1;
 }
 
+.write-review-btn {
+  background: linear-gradient(135deg, #47BDCF 0%, #7B86FC 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.write-review-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(71, 189, 207, 0.4);
+}
+
+.tour-detail-page .tour-meta .votes,
+.tour-detail-page .tour-header .votes {
+  color: white !important;
+}
+
 .tour-detail-header {
   margin-bottom: 30px;
 }

@@ -11,6 +11,7 @@ interface SaveTourModalProps {
     destination: string;
     price: number;
     type: TourType;
+    imageUrl?: string;
   }) => void;
   initialData?: {
     title: string;
@@ -18,6 +19,7 @@ interface SaveTourModalProps {
     destination: string;
     price: number;
     type: TourType;
+    imageUrl?: string;
   } | null;
 }
 
@@ -32,6 +34,7 @@ export const SaveTourModal: React.FC<SaveTourModalProps> = ({
   const [destination, setDestination] = useState('');
   const [price, setPrice] = useState('');
   const [type, setType] = useState<TourType>(TourType.RECREATION);
+  const [imageUrl, setImageUrl] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   // Загружаем начальные данные при открытии
@@ -76,7 +79,8 @@ export const SaveTourModal: React.FC<SaveTourModalProps> = ({
     description: description.trim(),
     destination: destination.trim(),
     price: Number(price),
-    type
+    type,
+    imageUrl: imageUrl.trim()
   });
   
   };
@@ -148,6 +152,16 @@ export const SaveTourModal: React.FC<SaveTourModalProps> = ({
             />
             {errors.description && <span className="error-text">{errors.description}</span>}
           </div>
+
+          <div className="form-group">
+  <label>Ссылка на фото (URL)</label>
+  <input
+    type="text"
+    value={imageUrl}
+    onChange={(e) => setImageUrl(e.target.value)}
+    placeholder="https://example.com/photo.jpg"
+  />
+</div>
 
           <div className="modal-footer">
             <button type="button" className="btn-cancel" onClick={onClose}>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './MyPurchasesPage.css';
+import { toast } from 'sonner';
+import { purchasesApi } from '../services/api';
 
 interface Purchase {
   id: number;
@@ -17,12 +19,31 @@ export const MyPurchasesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const savedPurchases = JSON.parse(localStorage.getItem('purchases') || '[]');
-    setPurchases(savedPurchases.sort((a: Purchase, b: Purchase) => 
-      new Date(b.date).getTime() - new Date(a.date).getTime()
-    ));
-    setLoading(false);
+    const fetchPurchases = async () => {
+      setLoading(true);
+      try {
+        const response = await purchasesApi.getMy();
+        setPurchases(response.data);
+      } catch (error) {
+        console.error('Ошибка загрузки покупок:', error);
+        toast.error('Не удалось загрузить покупки');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPurchases();
   }, []);
+
+  const formatDate = (dateString: string) => {
+  if (!dateString) return 'Дата неизвестна';
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'Дата неизвестна';
+  return date.toLocaleDateString('ru-RU', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric'
+  });
+};
 
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -77,10 +98,6 @@ export const MyPurchasesPage: React.FC = () => {
                 <div className="detail">
                   <span>Сумма:</span>
                   <strong>{purchase.price} ₽</strong>
-                </div>
-                <div className="detail">
-                  <span>Дата:</span>
-                  <strong>{new Date(purchase.date).toLocaleDateString('ru-RU')}</strong>
                 </div>
               </div>
 

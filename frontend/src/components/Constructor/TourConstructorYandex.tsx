@@ -4,7 +4,7 @@ import { YandexMapComponent, RoutePoint } from '../Map/YandexMap';
 import { RoutePointList, RoutePointItem } from './RoutePointList';
 import { SaveTourModal } from './SaveTourModal';
 import { TourRoute, TourType } from '../../types';
-import { saveUserTour, updateUserTour, SaveTourData, getUserTour } from '../../services/tourStorage';
+import { toursApi } from '../../services/api';
 import './TourConstructor.css';
 import { toast } from 'sonner';
 interface TourConstructorYandexProps {
@@ -41,21 +41,41 @@ const [editingTour, setEditingTour] = useState<{
   type: TourType;
 } | null>(null);
 
-// Загружаем данные тура при редактировании (НЕ открываем модалку)
 useEffect(() => {
-  if (tourId) {
-    const tour = getUserTour(tourId);
-    if (tour) {
-      setEditingTour({
-        title: tour.title,
-        description: tour.description,
-        destination: tour.destination,
-        price: tour.price,
-        type: tour.type
-      });
-      // НЕ открываем модалку здесь!
+  const fetchTour = async () => {
+    if (!tourId) return;
+    
+    try {
+      const response = await toursApi.getById(tourId);
+      const tour = response.data;
+      
+      if (tour && tour.route && tour.route.points) {
+        // Преобразуем точки из API в формат для карты
+        const loadedPoints = tour.route.points.map((point: any, index: number) => ({
+          id: point.id || uuidv4(),
+          name: point.name || `Точка ${index + 1}`,
+          position: [point.longitude, point.latitude] as [number, number],
+          order: point.order || index,
+          description: point.description || ''
+        }));
+        setPoints(loadedPoints);
+        
+        // Заполняем данные для формы редактирования
+        setEditingTour({
+          title: tour.title,
+          description: tour.description,
+          destination: tour.destination,
+          price: tour.price,
+          type: tour.type
+        });
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки тура для редактирования:', error);
+      toast.error('Не удалось загрузить тур');
     }
-  }
+  };
+  
+  fetchTour();
 }, [tourId]);
 
 // Функция открытия модального окна (вызывается по кнопке)
@@ -145,12 +165,13 @@ const openSaveModal = () => {
     setRouteInfo({ distance, duration });
   }, []);
 
-const handleSaveTour = (tourData: {
+const handleSaveTour = async (tourData: {
   title: string;
   description: string;
   destination: string;
   price: number;
   type: TourType;
+  imageUrl?: string;
 }) => {
   // Преобразуем точки маршрута в формат для сохранения
   const routePoints = points.map(p => ({
@@ -168,39 +189,32 @@ const handleSaveTour = (tourData: {
     totalDuration: routeInfo?.duration
   };
 
-  if (tourId) {
-    // Редактируем существующий тур
-    const updated = updateUserTour(tourId, {
-      title: tourData.title,
-      description: tourData.description,
-      destination: tourData.destination,
-      price: tourData.price,
-      type: tourData.type,
-      route: route
-    });
-    
-    if (updated) {
-      toast.success(`Тур "${updated.title}" успешно обновлен!`);
-    } else {
-      toast.error('Ошибка при обновлении тура');
-    }
-  } else {
-    // Создаем новый тур
-    const saveData: SaveTourData = {
-      title: tourData.title,
-      description: tourData.description,
-      destination: tourData.destination,
-      price: tourData.price,
-      type: tourData.type,
-      route: route
-    };
+  const tourDataToSend = {
+  title: tourData.title,
+  description: tourData.description,
+  destination: tourData.destination,
+  price: tourData.price,
+  type: tourData.type,
+  route: route,
+  imageUrl: tourData.imageUrl || '' 
+};
 
-    const newTour = saveUserTour(saveData);
-    toast.success(`Тур "${newTour.title}" успешно сохранен!`);
+  try {
+    if (tourId) {
+      // Редактируем существующий тур через API
+      await toursApi.update(tourId, tourDataToSend);
+      toast.success(`Тур "${tourData.title}" успешно обновлен!`);
+    } else {
+      // Создаем новый тур через API
+      await toursApi.create(tourDataToSend);
+      toast.success(`Тур "${tourData.title}" успешно сохранен!`);
+    }
+    setIsModalOpen(false);
+    setEditingTour(null);
+  } catch (error) {
+    console.error('Save error:', error);
+    toast.error('Ошибка при сохранении тура');
   }
-  
-  setIsModalOpen(false); // Это должно закрыть модальное окно
-  setEditingTour(null);   // Сбрасываем редактируемый тур
 };
 
   // Преобразуем YandexRoutePoint в RoutePointItem для списка

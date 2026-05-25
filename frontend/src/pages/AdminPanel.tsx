@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tour } from '../types';
-import { getUserTours, deleteUserTour } from '../services/tourStorage';
 import './AdminPanel.css';
+import { toast } from 'sonner';
+import { toursApi, purchasesApi } from '../services/api';
+import api from '../services/api';
 
 export const AdminPanel: React.FC = () => {
   const navigate = useNavigate();
@@ -12,33 +14,73 @@ export const AdminPanel: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = () => {
-    const allTours = getUserTours();
-    setTours(allTours);
-    
-    const allPurchases = JSON.parse(localStorage.getItem('purchases') || '[]');
-    setPurchases(allPurchases);
-    
-    setLoading(false);
-  };
-
-  const handleDeleteTour = (id: number) => {
-    if (window.confirm('Удалить этот тур?')) {
-      deleteUserTour(id);
-      loadData();
+  const loadAllData = async () => {
+    setLoading(true);
+    try {
+      const toursRes = await toursApi.getAll();
+      setTours(toursRes.data);
+      
+      const purchasesRes = await purchasesApi.getAll();  // ← изменил getMy на getAll
+      setPurchases(purchasesRes.data);
+    } catch (error) {
+      console.error('Ошибка загрузки:', error);
+    } finally {
+      setLoading(false);
     }
   };
+  
+  loadAllData();
+}, []);
 
-  const handleUpdatePurchaseStatus = (purchaseId: number, newStatus: string) => {
-    const updatedPurchases = purchases.map(p => 
-      p.id === purchaseId ? { ...p, status: newStatus } : p
-    );
-    localStorage.setItem('purchases', JSON.stringify(updatedPurchases));
-    setPurchases(updatedPurchases);
-  };
+  const loadData = async () => {
+  try {
+    const response = await toursApi.getAll();
+    setTours(response.data);
+  } catch (error) {
+    console.error('Ошибка загрузки туров:', error);
+  }
+};
+
+const [purchasesLoading, setPurchasesLoading] = useState(false);
+
+const loadPurchases = async () => {
+  try {
+    const response = await purchasesApi.getAll();
+    setPurchases(response.data || []);
+  } catch (error) {
+    console.error('Ошибка загрузки заказов:', error);
+    setPurchases([]);
+  }
+};
+
+useEffect(() => {
+  loadData();
+  loadPurchases();
+}, []);
+
+  const handleDeleteTour = async (id: number) => {
+  if (window.confirm('Удалить этот тур?')) {
+    try {
+      await toursApi.delete(id);
+      loadData();
+      toast.success('Тур удален');
+    } catch (error) {
+      console.error('Ошибка удаления:', error);
+      toast.error('Ошибка при удалении тура');
+    }
+  }
+};
+
+  const handleUpdatePurchaseStatus = async (purchaseId: number, newStatus: string) => {
+  try {
+    await purchasesApi.updateStatus(purchaseId, newStatus);
+    toast.success(`Заказ ${newStatus === 'confirmed' ? 'подтвержден' : 'отменен'}`);
+    loadPurchases(); 
+  } catch (error) {
+    console.error('Ошибка обновления статуса:', error);
+    toast.error('Ошибка при обновлении статуса');
+  }
+};
 
   const getStatusLabel = (status: string) => {
     switch (status) {
@@ -58,24 +100,29 @@ export const AdminPanel: React.FC = () => {
     }
   };
 
-  const handleToggleHot = (tourId: number, isHot: boolean) => {
-  const tours = JSON.parse(localStorage.getItem('user_tours') || '[]');
-  const index = tours.findIndex((t: any) => t.id === tourId);
-  
-  if (index !== -1) {
-    const hotUntil = isHot 
-      ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
-      : undefined;
+  const handleToggleHot = async (tourId: number, isHot: boolean) => {
+  try {
+    const tourResponse = await toursApi.getById(tourId);
+    const tour = tourResponse.data;
     
-    tours[index] = { 
-      ...tours[index], 
-      hot: isHot,
-      hotUntil: hotUntil
-    };
+    await toursApi.update(tourId, {
+      ...tour,
+      hot: isHot
+    });
     
-    localStorage.setItem('user_tours', JSON.stringify(tours));
+    toast.success(isHot ? 'Тур помечен как горячий' : 'Горячий статус снят');
     loadData();
+  } catch (error) {
+    console.error('Ошибка:', error);
+    toast.error('Ошибка при обновлении статуса');
   }
+};
+
+const formatDate = (dateString: string) => {
+  if (!dateString) return 'Дата неизвестна';
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'Дата неизвестна';
+  return date.toLocaleDateString('ru-RU');
 };
 
   if (loading) {
@@ -94,12 +141,12 @@ export const AdminPanel: React.FC = () => {
         >
           Туры ({tours.length})
         </button>
-        <button 
-          className={`tab ${activeTab === 'purchases' ? 'active' : ''}`}
-          onClick={() => setActiveTab('purchases')}
-        >
-          Заказы ({purchases.length})
-        </button>
+       <button 
+  className={`tab ${activeTab === 'purchases' ? 'active' : ''}`}
+  onClick={() => setActiveTab('purchases')}
+>
+  Заказы ({purchases?.length ?? 0})
+</button>
       </div>
 
       {activeTab === 'tours' && (
@@ -179,68 +226,58 @@ export const AdminPanel: React.FC = () => {
       )}
 
       {activeTab === 'purchases' && (
-        <div className="admin-purchases">
-          <div className="purchases-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Тур</th>
-                  <th>Кол-во</th>
-                  <th>Сумма</th>
-                  <th>Дата</th>
-                  <th>Статус</th>
-                  <th>Действия</th>
-                </tr>
-              </thead>
-              <tbody>
-                {purchases.map(purchase => (
-                  <tr key={purchase.id}>
-                    <td>{purchase.id}</td>
-                    <td>
-                      <a href={`/tour/${purchase.tourId}`} target="_blank" rel="noopener noreferrer">
-                        {purchase.tourTitle}
-                      </a>
-                    </td>
-                    <td>{purchase.units} шт.</td>
-                    <td>{purchase.price} ₽</td>
-                    <td>{new Date(purchase.date).toLocaleDateString('ru-RU')}</td>
-                    <td>
-                      <span className={`status-badge ${getStatusClass(purchase.status)}`}>
-                        {getStatusLabel(purchase.status)}
-                      </span>
-                    </td>
-                    <td className="actions">
-                      {purchase.status === 'pending' && (
-                        <>
-                          <button 
-                            className="btn-confirm"
-                            onClick={() => handleUpdatePurchaseStatus(purchase.id, 'confirmed')}
-                          >
-                            ✓ Подтвердить
-                          </button>
-                          <button 
-                            className="btn-cancel-order"
-                            onClick={() => handleUpdatePurchaseStatus(purchase.id, 'cancelled')}
-                          >
-                            ✗ Отменить
-                          </button>
-                        </>
-                      )}
-                      {purchase.status === 'confirmed' && (
-                        <span className="completed-badge">Выполнен</span>
-                      )}
-                      {purchase.status === 'cancelled' && (
-                        <span className="cancelled-badge">Отменен</span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+  <div className="admin-purchases">
+    {loading ? (
+      <div>Загрузка заказов...</div>
+    ) : purchases.length === 0 ? (
+      <div>Нет заказов</div>
+    ) : (
+      <div className="purchases-table">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Тур</th>
+              <th>Кол-во</th>
+              <th>Сумма</th>
+              <th>Дата</th>
+              <th>Статус</th>
+              <th>Действия</th>
+            </tr>
+          </thead>
+          <tbody>
+            {purchases.map(purchase => (
+              <tr key={purchase.id}>
+                <td>{purchase.id}</td>
+                <td>{purchase.tourTitle}</td>
+                <td>{purchase.units} шт.</td>
+                <td>{purchase.price} ₽</td>
+                <td>{new Date(purchase.createdAt).toLocaleDateString()}</td>
+                <td>
+                  <span className={`status-badge ${getStatusClass(purchase.status)}`}>
+                    {getStatusLabel(purchase.status)}
+                  </span>
+                </td>
+                <td className="actions">
+                  {purchase.status === 'pending' && (
+                    <>
+                      <button onClick={() => handleUpdatePurchaseStatus(purchase.id, 'confirmed')}>
+                        ✓
+                      </button>
+                      <button onClick={() => handleUpdatePurchaseStatus(purchase.id, 'cancelled')}>
+                        ✗
+                      </button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
+  </div>
+)}
     </div>
     </div>
   );

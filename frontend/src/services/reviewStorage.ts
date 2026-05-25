@@ -1,102 +1,56 @@
 import { Review, CreateReviewData } from '../types/review';
+import api from './api';
 
-const STORAGE_KEY = 'tour_reviews';
+const STORAGE_KEY = 'tour_reviews'; // оставим только для кэша (опционально)
 
-export const getTourReviews = (tourId: number): Review[] => {
-  const allReviews = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  return allReviews.filter((r: Review) => r.tourId === tourId);
+export const getTourReviews = async (tourId: number): Promise<Review[]> => {
+  try {
+    const response = await api.get(`/reviews/tour/${tourId}`);
+    return response.data || [];
+  } catch (error) {
+    console.error('Ошибка загрузки отзывов:', error);
+    return [];
+  }
 };
 
-export const canUserReview = (tourId: number): boolean => {
-  // Проверяем, покупал ли пользователь этот тур
-  const purchases = JSON.parse(localStorage.getItem('purchases') || '[]');
-  const user = localStorage.getItem('user');
-  
-  if (!user) return false;
-  
+export const canUserReview = async (tourId: number): Promise<boolean> => {
   try {
-    const currentUser = JSON.parse(user);
-    const hasPurchased = purchases.some((p: any) => p.tourId === tourId && p.status !== 'cancelled');
-    
-    if (!hasPurchased) return false;
-    
-    // Проверяем, не оставлял ли уже отзыв
-    const allReviews = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-    const hasReview = allReviews.some(
-      (r: Review) => r.tourId === tourId && r.userId === currentUser.id
-    );
-    
-    return !hasReview;
-  } catch {
+    const response = await api.get(`/purchases/check/${tourId}`);
+    return response.data.canReview === true;
+  } catch (error) {
+    console.error('Ошибка проверки права на отзыв:', error);
     return false;
   }
 };
 
-export const addReview = (data: CreateReviewData, userName: string): Review => {
-  const allReviews = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  
-  // Получаем ID пользователя из localStorage
-  const user = localStorage.getItem('user');
-  let userId = Date.now();
-  let finalUserName = userName;
-  
-  if (user) {
-    try {
-      const currentUser = JSON.parse(user);
-      userId = currentUser.id;
-      finalUserName = `${currentUser.firstName} ${currentUser.lastName}` || currentUser.username || userName;
-    } catch {}
+export const addReview = async (data: CreateReviewData): Promise<Review> => {
+  try {
+    const response = await api.post('/reviews', {
+      tourId: data.tourId,
+      rating: data.rating,
+      text: data.text
+    });
+    
+    // Получаем полные данные отзыва (с именем пользователя, датой)
+    const reviewsResponse = await api.get(`/reviews/tour/${data.tourId}`);
+    const newReview = reviewsResponse.data.find((r: Review) => r.userId === response.data.userId);
+    return newReview || response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Ошибка при добавлении отзыва');
   }
-  
-  // Проверяем существующий отзыв
-  const existingReview = allReviews.find(
-    (r: Review) => r.tourId === data.tourId && r.userId === userId
-  );
-  if (existingReview) {
-    throw new Error('Вы уже оставляли отзыв на этот тур');
-  }
-  
-  const newReview: Review = {
-    id: Date.now(),
-    tourId: data.tourId,
-    userId: userId,
-    userName: finalUserName,
-    rating: data.rating,
-    text: data.text,
-    date: new Date().toISOString()
-  };
-  
-  allReviews.push(newReview);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(allReviews));
-  
-  updateTourRating(data.tourId);
-  
-  return newReview;
 };
 
-export const deleteReview = (reviewId: number, tourId: number): void => {
-  const allReviews = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  const filtered = allReviews.filter((r: Review) => r.id !== reviewId);
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
-  
-  updateTourRating(tourId);
+export const deleteReview = async (reviewId: number, tourId: number): Promise<void> => {
+  try {
+    await api.delete(`/reviews/${reviewId}`);
+  } catch (error) {
+    console.error('Ошибка удаления отзыва:', error);
+    throw error;
+  }
 };
 
-const updateTourRating = (tourId: number): void => {
-  const reviews = getTourReviews(tourId);
-  const tours = JSON.parse(localStorage.getItem('user_tours') || '[]');
-  
-  const tourIndex = tours.findIndex((t: any) => t.id === tourId);
-  if (tourIndex !== -1) {
-    const avgRating = reviews.length > 0
-      ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-      : 0;
-    
-    console.log(`Tour ${tourId}: ${reviews.length} reviews, avgRating = ${avgRating}`);
-    
-    tours[tourIndex].avgRating = parseFloat(avgRating.toFixed(1));
-    tours[tourIndex].votesCount = reviews.length;
-    
-    localStorage.setItem('user_tours', JSON.stringify(tours));
-  }
+// Вспомогательная функция для обновления рейтинга (бэкенд сам обновит)
+export const updateTourRating = async (tourId: number): Promise<void> => {
+  // Бэкенд обновляет рейтинг при добавлении/удалении отзыва
+  // Эта функция не нужна, оставлена для совместимости
 };

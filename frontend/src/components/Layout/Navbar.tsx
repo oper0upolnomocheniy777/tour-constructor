@@ -50,11 +50,8 @@ export const Navbar: React.FC = () => {
 
           {isAgent && (
           <>
-            <Link to="/agent/tours" className="nav-link agent-link">
-              Управление турами
-            </Link>
-            <Link to="/admin" className="nav-link admin-link">
-              Админ-панель
+             <Link to="/admin" className="nav-link admin-link">
+               Админ-панель
             </Link>
           </>
         )}

@@ -10,20 +10,26 @@ import { getTourReviews, addReview, deleteReview, canUserReview } from '../servi
 import { Review } from '../types/review';
 import { exportToGPX, exportToJSON } from '../utils/exportRoute';
 import { toast } from 'sonner';
-
+import { useAuth } from '../context/AuthContext';
+import { toursApi } from '../services/api';
+import { Role } from '../types';
 
 
 export const TourDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const [tour, setTour] = useState<Tour | null>(null);
   const [loading, setLoading] = useState(true);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [userCanReview, setUserCanReview] = useState(false);
-  const checkCanReview = (tourId: number) => {
-  setUserCanReview(canUserReview(tourId));
+  
+  const checkCanReview = async (tourId: number) => {
+  const canReview = await canUserReview(tourId);
+  console.log('canUserReview result:', canReview); // ← добавить
+  setUserCanReview(canReview);
 };
 
  
@@ -42,20 +48,30 @@ const getCurrentUserName = () => {
 
 const currentUser = getCurrentUserName();
 
-  useEffect(() => {
-  if (id) {
-    const tourId = parseInt(id);
-    const foundTour = getUserTour(tourId);
-    if (foundTour) {
-      setTour(foundTour);
+ useEffect(() => {
+  const fetchData = async () => {
+    if (!id) return;
+    setLoading(true);
+    try {
+      const response = await toursApi.getById(parseInt(id));
+      setTour(response.data);
+      
+      // Загружаем отзывы и проверяем право на отзыв ТОЛЬКО после загрузки тура
+      if (response.data) {
+        const tourReviews = await getTourReviews(response.data.id);
+        setReviews(tourReviews);
+        
+        const canReview = await canUserReview(response.data.id);
+        setUserCanReview(canReview);
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки тура:', error);
+    } finally {
+      setLoading(false);
     }
-    // Загружаем отзывы
-    const tourReviews = getTourReviews(tourId);
-    setReviews(tourReviews);
-    // Проверяем, может ли пользователь оставить отзыв
-    checkCanReview(tourId);
-  }
-  setLoading(false);
+  };
+  
+  fetchData();
 }, [id]);
 
   const getTypeLabel = (type: TourType): string => {
@@ -76,13 +92,10 @@ const currentUser = getCurrentUserName();
     }
   };
 
-  const handleAddReview = (rating: number, text: string) => {
+ const handleAddReview = async (rating: number, text: string) => {
   if (tour) {
     try {
-      const newReview = addReview(
-        { tourId: tour.id, rating, text },
-        currentUser
-      );
+      const newReview = await addReview({ tourId: tour.id, rating, text });
       setReviews([newReview, ...reviews]);
       setShowReviewForm(false);
       // После добавления отзыва - больше нельзя оставить еще один
@@ -101,10 +114,9 @@ const currentUser = getCurrentUserName();
   }
 };
 
-// Обновите handleDeleteReview:
-const handleDeleteReview = (reviewId: number) => {
+const handleDeleteReview = async (reviewId: number) => {
   if (tour && window.confirm('Удалить этот отзыв?')) {
-    deleteReview(reviewId, tour.id);
+    await deleteReview(reviewId, tour.id);
     setReviews(reviews.filter(r => r.id !== reviewId));
     toast.success('Отзыв удален');
     
@@ -121,13 +133,13 @@ const handleDeleteReview = (reviewId: number) => {
 };
 
   // Преобразуем точки маршрута в формат для карты
-  const mapMarkers = tour?.route?.points.map(point => ({
+  const mapMarkers = (tour?.route?.points || []).map(point => ({
     id: point.id,
     name: point.name,
     position: [point.longitude, point.latitude] as [number, number],
     order: point.order,
     description: point.description
-  })) || [];
+}));
 
   const discountedPrice = tour?.discount
     ? tour.price * (1 - tour.discount / 100)
@@ -166,7 +178,18 @@ const handleExportJSON = () => {
   }
 };
 
+const isAuthor = user?.id === tour?.userId;
+const isAgent = user?.role === 'agent' || user?.roles?.some(r => r === Role.TOUR_AGENT);
+const canEdit = isAuthor || isAgent;
+const canBuy = isAuthenticated && !isAuthor;
+
+if (!tour) return <div>Загрузка...</div>;
+if (!tour.route || !tour.route.points) {
+  return <div>Нет точек маршрута</div>;
+}
+
   return (
+    
     <div className="page-container">
     <div className="tour-detail-page">
       <button onClick={() => navigate(-1)} className="back-btn">
@@ -177,10 +200,10 @@ const handleExportJSON = () => {
         <div className="tour-title-section">
           <h1>{tour.title}</h1>
           <div className="tour-badges">
-            {tour.hot && <span className="hot-badge">Горячий тур</span>}
-            {tour.discount > 0 && (
-              <span className="discount-badge">-{tour.discount}%</span>
-            )}
+            {tour.hot === true && <span className="hot-badge">Горячий тур</span>}
+{tour.discount > 0 && tour.discount !== null && (
+  <span className="discount-badge">-{tour.discount}%</span>
+)}
           </div>
         </div>
 
@@ -277,12 +300,14 @@ const handleExportJSON = () => {
     <div className="reviews-section">
     <h2>Отзывы ({reviews.length})</h2>
     
-    {userCanReview && !showReviewForm && (
-        <button className="write-review-btn" onClick={() => setShowReviewForm(true)}>
-        ✍️ Написать отзыв
-        </button>
-    )}
-    
+   {userCanReview && !showReviewForm && (
+  <button className="write-review-btn" onClick={() => setShowReviewForm(true)}>
+    ✍️ Написать отзыв
+  </button>
+)}
+
+
+
     {showReviewForm && (
         <ReviewForm
         tourId={tour.id}
@@ -320,12 +345,17 @@ const handleExportJSON = () => {
               <span className="price">{tour.price} ₽</span>
             )}
           </div>
-          <Link to={`/edit-tour/${tour.id}`} className="edit-btn">
-            Редактировать тур
-          </Link>
-          <Link to={`/checkout/${tour.id}`} className="buy-btn">
-            Купить тур
-            </Link>
+          {canEdit && (
+  <Link to={`/edit-tour/${tour.id}`} className="btn-edit">
+     Редактировать тур
+  </Link>
+)}
+
+{canBuy && (
+  <Link to={`/checkout/${tour.id}`} className="btn-buy">
+     Купить тур
+  </Link>
+)}
         </div>
       </div>
     </div>
