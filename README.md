@@ -8,7 +8,7 @@
 - 🗺️ **Интерактивная карта** на Яндекс.Картах
 - 📍 **Добавление точек маршрута** кликом по карте
 - 🔄 **Drag-and-drop** для изменения порядка точек
-- 🚗 **Построение маршрута** с расчетом расстояния и времени
+- 🚗 **Построение маршрута** с расчётом расстояния и времени
 - 💾 **Сохранение туров** в личном кабинете
 - 📋 **Просмотр списка туров** с фильтрацией
 - ⭐ **Отзывы и рейтинги** туров
@@ -21,22 +21,18 @@
 - React Router — навигация
 - Яндекс.Карты API — карты и маршруты
 - dnd-kit — drag-and-drop
-- React Hook Form — формы
 - Axios — HTTP-запросы
 
 **Backend:**
-- Java (Servlets)
-- MySQL
-- JDBC
-- Maven
+- Node.js + Express
+- SQLite
+- JWT (аутентификация)
+- bcryptjs (хеширование паролей)
 
 ## 🚀 Быстрый старт
 
 ### Требования
 - Node.js 18+
-- Java 11+
-- MySQL 8+
-- Maven
 
 ### Установка
 
@@ -46,12 +42,12 @@ git clone https://github.com/oper0upolnomocheniy777/tour-constructor
 cd tour-constructor
 
 # Настройка бэкенда
-# 1. Создайте базу данных MySQL
-# 2. Обновите database.properties
-# 3. Соберите проект
-mvn clean package
+cd backend
+npm install
+cp .env.example .env  # добавьте JWT_SECRET
+npm start
 
-# Настройка фронтенда
+# Настройка фронтенда (в новом терминале)
 cd frontend
 npm install
 cp .env.example .env  # добавьте API ключ Яндекс Карт
@@ -60,10 +56,15 @@ npm start
 
 ### Переменные окружения
 
-Создайте `.env` в папке frontend:
-
+**Backend (`.env`):**
 ```env
-REACT_APP_API_URL=http://localhost:8080/api
+PORT=5000
+JWT_SECRET=your_secret_key
+```
+
+**Frontend (`.env`):**
+```env
+REACT_APP_API_URL=http://localhost:5000/api
 REACT_APP_YANDEX_MAPS_API_KEY=ваш_ключ_яндекс_карт
 ```
 
@@ -93,35 +94,29 @@ tour-constructor/
 │   │   └── App.tsx
 │   └── package.json
 │
-└── src/                    # Java бэкенд
-    ├── main/
-    │   ├── java/
-    │   │   └── com/sfedu/touragency/
-    │   │       ├── controller/    # Сервлеты
-    │   │       ├── domain/        # Модели
-    │   │       ├── persistence/   # DAO
-    │   │       └── service/       # Бизнес-логика
-    │   └── webapp/         # JSP (легаси)
-    └── test/               # Тесты
+└── backend/                # Node.js бэкенд
+    ├── routes/             # API маршруты
+    ├── database.js         # Инициализация БД
+    ├── server.js           # Точка входа
+    └── package.json
 ```
 
 ## 👥 Роли
 
-- **Пользователь** — создает туры, покупает, оставляет отзывы
-- **Агент** — управляет турами, подтверждает покупки
+- **Пользователь** — создаёт личные туры, покупает, оставляет отзывы
+- **Агент** — создаёт публичные туры, управляет турами и заказами
 
 ## 🧪 Тестовые данные
 
 ```
 Пользователь:
-Логин: user
+Логин: test
 Пароль: 123456
 
 Агент:
 Логин: agent
 Пароль: 123456
 ```
-
 
 ## 👩‍💻 Автор
 
